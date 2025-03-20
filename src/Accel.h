@@ -6,7 +6,7 @@
 #define PROYECTOTALLERI_ACCEL_H
 
 
-class accel {
+class Accel {
 
 };
 
