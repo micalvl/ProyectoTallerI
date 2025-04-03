@@ -1,0 +1,14 @@
+//
+// Created by micalvl on 03/04/2025.
+//
+
+#ifndef PROYECTOTALLERI_JPL_EPH_DE430_H
+#define PROYECTOTALLERI_JPL_EPH_DE430_H
+
+
+class JPL_Eph_DE430 {
+
+};
+
+
+#endif //PROYECTOTALLERI_JPL_EPH_DE430_H

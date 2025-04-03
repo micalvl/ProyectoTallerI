@@ -1,0 +1,14 @@
+//
+// Created by micalvl on 03/04/2025.
+//
+
+#ifndef PROYECTOTALLERI_G_ACCELHARMONIC_H
+#define PROYECTOTALLERI_G_ACCELHARMONIC_H
+
+
+class G_AccelHarmonic {
+
+};
+
+
+#endif //PROYECTOTALLERI_G_ACCELHARMONIC_H
