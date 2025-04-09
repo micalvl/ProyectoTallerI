@@ -1,17 +1,18 @@
 /**
- *  @file   Frac.cpp
- *  @brief  Frac's method
+ *  @file   R_x.h
+ *  @brief  R_x's method
  *  @author [Original Author]
  *  @transcribed by Miguel Calvo León
  *  @date   2025-04-09
  ***********************************************/
 
-#include <cmath>
-#include "../include/Frac.h"
 
+#ifndef _R_X_
+#define _R_X_
 
-double Frac(double x){
-    return x-floor(x);
-}
+#include "Matrix.h"
 
+Matrix R_x(double alpha);
+
+#endif
 
