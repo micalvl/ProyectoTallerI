@@ -7,6 +7,7 @@
 #include "./include/Mjday.h"
 #include "./include/Matrix.h"
 #include "./include/R_x.h"
+#include "Legendre.h"
 
 #define TOL_ 10e-14
 
@@ -51,23 +52,6 @@ int R_x_01()
     return 0;
 }
 
-Matrix R_x(double alpha)
-{
-    Matrix rotmat(3,3);
-    double C, S;
-
-    C = cos(alpha);
-    S = sin(alpha);
-    // rotmat = zeros(3,3);
-
-    rotmat(1,1) = 1.0;
-    rotmat(1,2) = 0.0;
-    rotmat(1,3) = 0.0;
-
-    rotmat(2,1) = 0.0;
-    rotmat(2,2) = C;
-    rotmat(2,3) = S;
-}
 
 int all_tests()
 {
@@ -76,6 +60,13 @@ int all_tests()
     _verify(R_x_01);
 
     return 0;
+}
+
+int Legendre_01(){
+    Matrix pnm(3,3), dpnm(3,3);
+    Legendre(2,2,1.0, pnm, dpnm);
+    pnm.print();
+    dpnm.print();
 }
 
 

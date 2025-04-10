@@ -6,9 +6,9 @@
 #define PROYECTOTALLERI_R_Y_H
 
 
-class R_y {
+#include "Matrix.h"
 
-};
+Matrix R_y(double alpha);
 
 
 #endif //PROYECTOTALLERI_R_Y_H
