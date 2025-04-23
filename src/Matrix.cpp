@@ -9,6 +9,7 @@
 #include "../include/Matrix.h"
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 
 
 Matrix::Matrix(int fil, int col) : fil(fil), col(col)
@@ -118,6 +119,16 @@ void Matrix::print()
         std::cout << std::endl;
     }
     std::cout << std::endl;
+}
+
+double Matrix::norm() const {
+    double suma = 0.0;
+    for (int i = 0; i < fil; ++i) {
+        for (int j = 0; j < col; ++j) {
+            suma += matrix[i][j] * matrix[i][j];
+        }
+    }
+    return sqrt(suma);
 }
 
 

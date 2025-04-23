@@ -89,6 +89,8 @@ public:
      */
     void print();
 
+    double norm() const;
+
 
 private:
     /**

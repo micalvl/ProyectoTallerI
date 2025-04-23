@@ -17,7 +17,7 @@ add_executable(ProyectoTallerI
         src/Accel.cpp
         src/Accel.h
         src/AccelHarmonic.cpp
-        src/AccelHarmonic.h
+        include/AccelHarmonic.h
         src/AccelPointMass.cpp
         src/AccelPointMass.h
         src/angl.cpp
@@ -54,7 +54,7 @@ add_executable(ProyectoTallerI
         src/gibbs.cpp
         src/gibbs.h
         src/gmst.cpp
-        src/gmst.h
+        include/gmst.h
         src/hgibbs.cpp
         src/hgibbs.h
         src/IERS.cpp
@@ -62,7 +62,7 @@ add_executable(ProyectoTallerI
         src/JPL_Eph_DE430.cpp
         src/JPL_Eph_DE430.h
         src/Legendre.cpp
-        src/Legendre.h
+        include/Legendre.h
         src/LTC.cpp
         src/LTC.h
         src/Matrix.cpp
@@ -86,8 +86,6 @@ add_executable(ProyectoTallerI
         src/R_x.cpp
         src/R_y.cpp
         src/R_z.cpp
-        src/SAT_Const.cpp
-        src/SAT_Const.h
         src/sign_.cpp
         src/sign_.h
         src/timediff.cpp
@@ -99,4 +97,5 @@ add_executable(ProyectoTallerI
         src/VarEqn.cpp
         src/VarEqn.h
         EFK_GEOS3.cpp
-        EKF_test.cpp)
+        EKF_test.cpp
+        include/global.h)

@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   Legendre.h
+ *  @brief  Legendre method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-04-10
+ ***********************************************/
 
 #ifndef PROYECTOTALLERI_LEGENDRE_H
 #define PROYECTOTALLERI_LEGENDRE_H

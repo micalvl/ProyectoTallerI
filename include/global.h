@@ -1,0 +1,16 @@
+/**
+ *  @file   global.h
+ *  @brief  global variables
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-04-23
+ ***********************************************/
+
+#ifndef PROYECTOTALLERI_GLOBAL_H
+#define PROYECTOTALLERI_GLOBAL_H
+
+double Cnm[300][300];
+double Snm[200][200];
+
+
+#endif //PROYECTOTALLERI_GLOBAL_H

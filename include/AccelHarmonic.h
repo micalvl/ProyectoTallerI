@@ -6,9 +6,9 @@
 #define PROYECTOTALLERI_ACCELHARMONIC_H
 
 
-class AccelHarmonic {
+#include "Matrix.h"
 
-};
+Matrix AccelHarmonic(Matrix& r, Matrix& E, int n_max, int m_max);
 
 
 #endif //PROYECTOTALLERI_ACCELHARMONIC_H
