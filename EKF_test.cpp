@@ -4,10 +4,14 @@
 #include <iomanip>
 #include <stdio.h>
 #include <math.h>
-#include "./include/Mjday.h"
-#include "./include/Matrix.h"
-#include "./include/R_x.h"
-#include "Legendre.h"
+#include "../include/Mjday.h"
+#include "../include/Matrix.h"
+#include "../include/R_x.h"
+#include "../include/Legendre.h"
+#include "../include/R_y.h"
+#include "../include/R_z.h"
+#include "../include/gmst.h"
+#include "../include/Frac.h"
 
 #define TOL_ 10e-14
 
@@ -52,12 +56,48 @@ int R_x_01()
     return 0;
 }
 
-
-int all_tests()
+int R_y_01()
 {
-    _verify(Mjday_01);
-    _verify(Mjday_02);
-    _verify(R_x_01);
+    double alpha = 1.0;
+    Matrix sol(3, 3);
+
+    sol = R_y(alpha);
+    sol.print();
+
+    _assert(fabs(sol(1,1) - 0.54030230586814) < TOL_);
+    _assert(fabs(sol(1,2)) < TOL_);
+    _assert(fabs(sol(1,3) + 0.841470984807897) < TOL_);
+
+    _assert(fabs(sol(2,1)) < TOL_);
+    _assert(fabs(sol(2,2) - 1.0) < TOL_);
+    _assert(fabs(sol(2,3)) < TOL_);
+
+    _assert(fabs(sol(3,1) - 0.841470984807897) < TOL_);
+    _assert(fabs(sol(3,2)) < TOL_);
+    _assert(fabs(sol(3,3) - 0.54030230586814) < TOL_);
+
+    return 0;
+}
+
+int R_z_01()
+{
+    double alpha = 1.0;
+    Matrix sol(3, 3);
+
+    sol = R_z(alpha);
+    sol.print();
+
+    _assert(fabs(sol(1,1) - 0.54030230586814) < TOL_);
+    _assert(fabs(sol(1,2) - 0.841470984807897) < TOL_);
+    _assert(fabs(sol(1,3)) < TOL_);
+
+    _assert(fabs(sol(2,1) + 0.841470984807897) < TOL_);
+    _assert(fabs(sol(2,2) - 0.54030230586814) < TOL_);
+    _assert(fabs(sol(2,3)) < TOL_);
+
+    _assert(fabs(sol(3,1)) < TOL_);
+    _assert(fabs(sol(3,2)) < TOL_);
+    _assert(fabs(sol(3,3) - 1.0) < TOL_);
 
     return 0;
 }
@@ -67,7 +107,41 @@ int Legendre_01(){
     Legendre(2,2,1.0, pnm, dpnm);
     pnm.print();
     dpnm.print();
+    return 0;
 }
+
+double gmst_01() {
+
+    double Mjd_24_04_2025 = 60825.0;
+
+    double gmst_rad = gmst(Mjd_24_04_2025);
+
+    double expected_gmst = 3.8397;
+
+    _assert(fabs(gmst_rad - expected_gmst) < TOL_);
+
+    return 0.0;
+}
+
+int frac_01(){
+    _assert(fabs(Frac(1.5) - 0.5) < TOL_);
+    _assert(fabs(Frac(2.25) - 0.25) < TOL_);
+    _assert(fabs(Frac(1.66) - 0.66) < TOL_);
+}
+
+int all_tests()
+{
+    _verify(Mjday_01);
+    _verify(Mjday_02);
+    _verify(R_x_01);
+    _verify(R_y_01);
+    _verify(R_z_01);
+    _verify(frac_01);
+    _verify(gmst_01);
+
+    return 0;
+}
+
 
 
 int main()

@@ -30,6 +30,7 @@
 %--------------------------------------------------------------------------
 */
 
+/*
 function [G] = G_AccelHarmonic( r, U, n_max, m_max )
 
 d = 1.0;   % Position increment [m]
@@ -48,3 +49,4 @@ AccelHarmonic ( r-dr/2,U, n_max, m_max );
 % Derivative with respect to i-th axis
 G(:,i) = da/d;
 end
+*/
