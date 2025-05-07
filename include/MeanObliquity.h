@@ -6,9 +6,7 @@
 #define PROYECTOTALLERI_MEANOBLIQUITY_H
 
 
-class MeanObliquity {
-
-};
+double MeanObliquity(double Mjd_TT);
 
 
 #endif //PROYECTOTALLERI_MEANOBLIQUITY_H

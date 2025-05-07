@@ -91,6 +91,12 @@ public:
 
     double norm() const;
 
+    int getFilas();
+
+    int getColumnas();
+
+    Matrix operator2*(const Matrix& mat, double number);
+
 
 private:
     /**

@@ -67,7 +67,7 @@ add_executable(ProyectoTallerI
         src/LTC.h
         src/Matrix.cpp
         src/MeanObliquity.cpp
-        src/MeanObliquity.h
+        include/MeanObliquity.h
         src/MeasUpdate.cpp
         src/MeasUpdate.h
         src/Mjday.cpp
