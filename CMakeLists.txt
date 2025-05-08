@@ -87,7 +87,7 @@ add_executable(ProyectoTallerI
         src/R_y.cpp
         src/R_z.cpp
         src/sign_.cpp
-        src/sign_.h
+        include/sign_.h
         src/timediff.cpp
         src/timediff.h
         src/TimeUpdate.cpp

@@ -194,13 +194,16 @@ void findInvMatGaussJordan(float** mat, int order){
 int Matrix::getFilas() { return fil; }
 int Matrix::getColumnas() { return col; }
 
-Matrix Matrix::operator2*(const Matrix& mat, double number) {
-    Matrix result(mat.getFilas(), mat.getColumnas());
-    for (int i = 0; i < mat.getFilas(); ++i) {
-        for (int j = 0; j < mat.getColumnas(); ++j) {
-            result(i, j) = mat(i, j) * number;
+
+Matrix Matrix::transpose() const {
+    Matrix result(col, fil);
+
+    for (size_t i = 0; i < fil; ++i) {
+        for (size_t j = 0; j < col; ++j) {
+            result(j, i) = (*this)(i, j);
         }
     }
+
     return result;
 }
 

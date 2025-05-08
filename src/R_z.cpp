@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   R_z.cpp
+ *  @brief  R_z's method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-04-09
+ ***********************************************/
 
 #include <cmath>
 #include "../include/R_z.h"

@@ -5,10 +5,9 @@
 #ifndef PROYECTOTALLERI_TIMEUPDATE_H
 #define PROYECTOTALLERI_TIMEUPDATE_H
 
+#include "Matrix.h"
 
-class TimeUpdate {
-
-};
+void TimeUpdate(Matrix& P, const Matrix& Phi, double Qdt = 0.0);
 
 
 #endif //PROYECTOTALLERI_TIMEUPDATE_H

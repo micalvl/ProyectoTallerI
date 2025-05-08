@@ -95,7 +95,7 @@ public:
 
     int getColumnas();
 
-    Matrix operator2*(const Matrix& mat, double number);
+    Matrix transpose() const;
 
 
 private:
