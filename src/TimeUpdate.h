@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   TimeUpdate.h
+ *  @brief  TimeUpdate's method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-05-14
+ ***********************************************/
 
 #ifndef PROYECTOTALLERI_TIMEUPDATE_H
 #define PROYECTOTALLERI_TIMEUPDATE_H

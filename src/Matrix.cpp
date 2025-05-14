@@ -207,6 +207,24 @@ Matrix Matrix::transpose() const {
     return result;
 }
 
+Matrix Matrix::identity(int size) {
+    Matrix identity (size, size);
+    for (int i = 0; i < size; ++i) {
+        identity(i, i) = 1.0;
+    }
+    return identity;
+}
+
+Matrix Matrix::opsc(double scalar) const {
+    Matrix result(_rows, _cols);
+    for (int i = 0; i < _rows; ++i) {
+        for (int j = 0; j < _cols; ++j) {
+            result(i, j) = data[i][j] * scalar;
+        }
+    }
+    return result;
+}
+
 /*
 int main(){
     int order = 3;

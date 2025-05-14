@@ -19,7 +19,7 @@ add_executable(ProyectoTallerI
         src/AccelHarmonic.cpp
         include/AccelHarmonic.h
         src/AccelPointMass.cpp
-        src/AccelPointMass.h
+        include/AccelPointMass.h
         src/angl.cpp
         src/angl.h
         src/anglesdr.cpp
@@ -29,7 +29,7 @@ add_executable(ProyectoTallerI
         src/AzEIPa.cpp
         src/AzEIPa.h
         src/Cheb3D.cpp
-        src/Cheb3D.h
+        include/Cheb3D.h
         src/DEInteg.cpp
         src/DEInteg.h
         src/doubler.cpp
@@ -72,7 +72,7 @@ add_executable(ProyectoTallerI
         src/MeasUpdate.h
         src/Mjday.cpp
         src/Mjday_TDB.cpp
-        src/Mjday_TDB.h
+        include/Mjday_TDB.h
         src/NutAngles.cpp
         src/NutAngles.h
         src/NutMatrix.cpp

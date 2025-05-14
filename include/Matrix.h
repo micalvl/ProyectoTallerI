@@ -97,6 +97,10 @@ public:
 
     Matrix transpose() const;
 
+    static Matrix identity(int size);
+
+    Matrix opsc(double scalar) const;
+
 
 private:
     /**
