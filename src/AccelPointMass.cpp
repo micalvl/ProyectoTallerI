@@ -29,24 +29,24 @@
 
 
 
-array<double, 3> AccelPointMass(const array<double, 3> r, const array<double, 3> s, double GM) {
+Matrix AccelPointMass(const Matrix& r, const Matrix& s, double GM) {
 
-    array<double, 3> a;
+    if (r.getFilas() != 3 || r.getColumnas() != 1 ||
+        s.getFilas() != 3 || s.getColumnas() != 1) {
+        throw invalid_argument("Los vectores r y s deben ser de tamaño 3x1.");
+    }
 
-    double d0 = r[0] - s[0];
-    double d1 = r[1] - s[1];
-    double d2 = r[2] - s[2];
+    Matrix d = r.operator-(s);
 
-    double norm_d = sqrt(d0*d0 + d1*d1 + d2*d2);
-    double norm_s = sqrt(s[0]*s[0] + s[1]*s[1] + s[2]*s[2]);
+    // Norma de d y s
+    double norm_d = d.norm();
+    double norm_s = s.norm();
 
-    double norm_d3 = pow(norm_d, 3);
-    double norm_s3 = pow(norm_s, 3);
 
-    // a = -GM * ( d/norm(d)^3 + s/norm(s)^3 )
-    a[0] = -GM * (d0 / norm_d3 + s[0] / norm_s3);
-    a[1] = -GM * (d1 / norm_d3 + s[1] / norm_s3);
-    a[2] = -GM * (d2 / norm_d3 + s[2] / norm_s3);
+    Matrix term1 = d.opsc(1.0 / pow(norm_d, 3));
+    Matrix term2 = s.opsc(1.0 / pow(norm_s, 3));
+
+    Matrix a = (term1 + term2).opsc(-GM);
 
     return a;
 }

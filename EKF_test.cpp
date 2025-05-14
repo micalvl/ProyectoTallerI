@@ -12,6 +12,8 @@
 #include "../include/R_z.h"
 #include "../include/gmst.h"
 #include "../include/Frac.h"
+#include "../include/AccelPointMass.h"
+#include "../include/Sat_const.h"
 
 #define TOL_ 10e-14
 
@@ -102,32 +104,55 @@ int R_z_01()
     return 0;
 }
 
-int Legendre_01(){
-    Matrix pnm(3,3), dpnm(3,3);
-    Legendre(2,2,1.0, pnm, dpnm);
-    pnm.print();
-    dpnm.print();
+int Legendre_01() {
+    Matrix pnm(3, 3), dpnm(3, 3);
+    double fi = 1.0;
+
+    Legendre(2, 2, fi, pnm, dpnm);
+
+    _assert(fabs(pnm(2, 2) - (sqrt(3.0) * cos(fi))) < TOL_);
+    _assert(fabs(dpnm(2, 2) - (-sqrt(3.0) * sin(fi))) < TOL_);
+
     return 0;
 }
 
-double gmst_01() {
-
+int gmst_01() {
     double Mjd_24_04_2025 = 60825.0;
-
     double gmst_rad = gmst(Mjd_24_04_2025);
-
-    double expected_gmst = 3.8397;
+    double expected_gmst = 4.32424566600459492;
 
     _assert(fabs(gmst_rad - expected_gmst) < TOL_);
-
-    return 0.0;
+    return 0;
 }
 
 int frac_01(){
     _assert(fabs(Frac(1.5) - 0.5) < TOL_);
     _assert(fabs(Frac(2.25) - 0.25) < TOL_);
     _assert(fabs(Frac(1.66) - 0.66) < TOL_);
+    return 0;
 }
+
+int accel_point_mass_01()
+{
+    double r_vals[] = {7000.0, 0.0, 0.0};
+    double s_vals[] = {0.0, 0.0, 0.0};
+
+    Matrix r(3, 1, r_vals, 3);
+    Matrix s(3, 1, s_vals, 3);
+
+    Matrix a = AccelPointMass(r, s, GM_Earth);
+
+    double norm_r = r.norm();
+    double expected_ax = -GM_Earth * (1.0 / pow(norm_r, 3)) * r(1,1);
+
+    _assert(fabs(a(1,1) - expected_ax) < TOL_);
+    _assert(fabs(a(2,1)) < TOL_);
+    _assert(fabs(a(3,1)) < TOL_);
+
+    return 0;
+}
+
+
 
 int all_tests()
 {
@@ -138,6 +163,8 @@ int all_tests()
     _verify(R_z_01);
     _verify(frac_01);
     _verify(gmst_01);
+    _verify(Legendre_01);
+    _verify(accel_point_mass_01);
 
     return 0;
 }

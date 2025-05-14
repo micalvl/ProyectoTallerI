@@ -68,7 +68,7 @@ Matrix& Matrix::operator=(const Matrix& matrix2)
     return *this;
 }
 
-Matrix Matrix::operator+(const Matrix& matrix2)
+Matrix Matrix::operator+(const Matrix& matrix2) const
 {
     Matrix result(fil, col);
 
@@ -79,7 +79,7 @@ Matrix Matrix::operator+(const Matrix& matrix2)
     return result;
 }
 
-Matrix Matrix::operator-(const Matrix& matrix2)
+Matrix Matrix::operator-(const Matrix& matrix2) const
 {
     Matrix result(fil, col);
 
@@ -90,7 +90,7 @@ Matrix Matrix::operator-(const Matrix& matrix2)
     return result;
 }
 
-Matrix Matrix::operator*(const Matrix& matrix2)
+Matrix Matrix::operator*(const Matrix& matrix2) const
 {
     Matrix result(fil, col);
 
@@ -191,8 +191,8 @@ void findInvMatGaussJordan(float** mat, int order){
     return;
 }
 
-int Matrix::getFilas() { return fil; }
-int Matrix::getColumnas() { return col; }
+int Matrix::getFilas() const { return fil; }
+int Matrix::getColumnas() const { return col; }
 
 
 Matrix Matrix::transpose() const {
@@ -216,13 +216,12 @@ Matrix Matrix::identity(int size) {
 }
 
 Matrix Matrix::opsc(double scalar) const {
-    Matrix result(_rows, _cols);
-    for (int i = 0; i < _rows; ++i) {
-        for (int j = 0; j < _cols; ++j) {
-            result(i, j) = data[i][j] * scalar;
+    Matrix result(fil, col);
+    for (int i = 0; i < fil; ++i) {
+        for (int j = 0; j < col; ++j) {
+            result(i + 1, j + 1) = (*this)(i + 1, j + 1) * scalar;
         }
     }
-    return result;
 }
 
 /*

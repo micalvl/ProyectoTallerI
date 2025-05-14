@@ -22,7 +22,7 @@
  * @param m_max Maximum order of the gravity field model (must satisfy m_max <= n_max)
  * @return Acceleration vector in the inertial frame (3x1)
  */
-Matrix AccelHarmonic(Matrix& r, Matrix& E, int n_max, int m_max);
+Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max);
 
 
 #endif //PROYECTOTALLERI_ACCELHARMONIC_H

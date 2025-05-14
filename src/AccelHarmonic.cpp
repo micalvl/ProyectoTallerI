@@ -37,7 +37,7 @@ using namespace std;
 %--------------------------------------------------------------------------
 */
 
-Matrix AccelHarmonic(Matrix& r, Matrix& E, int n_max, int m_max){
+Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max){
     double gm, d, lon, r_ref, dUdr, dUdlatgc, dUdlon, q3, q2, q1, latgc, b1, b2, b3, r2xy, ax, ay, az;
     Matrix pnm(300,300);
     Matrix dpnm(300,300);

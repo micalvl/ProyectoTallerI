@@ -57,7 +57,7 @@ public:
      * @param matrix2 The matrix to add.
      * @return The resulting matrix.
      */
-    Matrix operator+(const Matrix& matrix2);
+    Matrix operator+(const Matrix& matrix2) const;
 
     /**
      * @brief Subtracts another matrix from this matrix.
@@ -65,7 +65,7 @@ public:
      * @param matrix2 The matrix to subtract.
      * @return The resulting matrix.
      */
-    Matrix operator-(const Matrix& matrix2);
+    Matrix operator-(const Matrix& matrix2) const;
 
     /**
      * @brief Multiplies two matrices.
@@ -73,7 +73,7 @@ public:
      * @param matrix2 The matrix to multiply.
      * @return The resulting matrix.
      */
-    Matrix operator*(const Matrix& matrix2);
+    Matrix operator*(const Matrix& matrix2) const;
 
     /**
      * @brief Accesses an element of the matrix.
@@ -91,10 +91,8 @@ public:
 
     double norm() const;
 
-    int getFilas();
-
-    int getColumnas();
-
+    int getFilas() const;
+    int getColumnas() const;
     Matrix transpose() const;
 
     static Matrix identity(int size);
