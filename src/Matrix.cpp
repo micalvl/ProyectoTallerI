@@ -197,22 +197,17 @@ int Matrix::getColumnas() const { return col; }
 
 Matrix Matrix::transpose() const {
     Matrix result(col, fil);
-
-    for (size_t i = 0; i < fil; ++i) {
-        for (size_t j = 0; j < col; ++j) {
+    for (int i = 1; i <= fil; ++i)
+        for (int j = 1; j <= col; ++j)
             result(j, i) = (*this)(i, j);
-        }
-    }
-
     return result;
 }
 
 Matrix Matrix::identity(int size) {
-    Matrix identity (size, size);
-    for (int i = 0; i < size; ++i) {
-        identity(i, i) = 1.0;
-    }
-    return identity;
+    Matrix I(size, size);
+    for (int i = 1; i <= size; ++i)
+        I(i, i) = 1.0;
+    return I;
 }
 
 Matrix Matrix::opsc(double scalar) const {
@@ -222,6 +217,7 @@ Matrix Matrix::opsc(double scalar) const {
             result(i + 1, j + 1) = (*this)(i + 1, j + 1) * scalar;
         }
     }
+    return result;
 }
 
 /*

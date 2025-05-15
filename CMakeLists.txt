@@ -36,8 +36,6 @@ add_executable(ProyectoTallerI
         src/doubler.h
         src/EccAnom.cpp
         src/EccAnom.h
-        src/EFK_GEOS3.cpp
-        src/EFK_GEOS3.h
         src/elements.cpp
         src/elements.h
         src/EqnEquinox.cpp

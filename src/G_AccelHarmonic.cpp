@@ -30,7 +30,6 @@
 */
 
 
-#include "../include/Matrix.h"
 #include "G_AccelHarmonic.h"
 
 Matrix G_AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max) {

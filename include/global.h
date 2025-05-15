@@ -13,4 +13,5 @@ double Cnm[300][300];
 double Snm[200][200];
 
 
+
 #endif //PROYECTOTALLERI_GLOBAL_H

@@ -10,7 +10,7 @@
 #define PROYECTOTALLERI_G_ACCELHARMONIC_H
 
 
-#include "Matrix.h"
+#include "../include/Matrix.h"
 #include "../include/AccelHarmonic.h"
 /**
  * @brief Calcula el gradiente del campo gravitatorio armónico de la Tierra.

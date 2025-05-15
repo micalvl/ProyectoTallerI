@@ -26,7 +26,7 @@
 %--------------------------------------------------------------------------
 */
 
-vector<double> Cheb3D(double t, int N, double Ta, double Tb,const vector<double>& Cx,const vector<double>& Cy,const vector<double>& Cz){
+Matrix Cheb3D(double t, int N, double Ta, double Tb,const vector<double>& Cx,const vector<double>& Cy,const vector<double>& Cz){
     //Check validity
     if( (t<Ta) || (Tb<t) ){
     cerr << "ERROR: Time out of range in Cheb3D::Value\n" << endl;
@@ -34,24 +34,30 @@ vector<double> Cheb3D(double t, int N, double Ta, double Tb,const vector<double>
 
     double tau = (2*t-Ta-Tb)/(Tb-Ta);
 
-    vector<double> f1(3, 0.0);
-    vector<double> f2(3, 0.0);
+    Matrix f1(1, 3), f2(1, 3);
 
-    for (int i = N - 1; i >= 1; --i) {
+    for (int i = N; i >= 2; --i) {
+        Matrix old_f1 = f1;
 
-        vector<double> old_f1 = f1;
+        double ci_vals[3] = {
+                Cx[i-1],
+                Cy[i-1],
+                Cz[i-1]
+        };
+        Matrix Ci(1, 3, ci_vals, 3);
 
-        f1[0] = 2 * tau * f1[0] - f2[0] + Cx[i];
-        f1[1] = 2 * tau * f1[1] - f2[1] + Cy[i];
-        f1[2] = 2 * tau * f1[2] - f2[2] + Cz[i];
-
+        f1 = f1.opsc(2.0*tau) - f2 + Ci;
         f2 = old_f1;
     }
 
-    vector<double> ChebApp(3, 0.0);
-    ChebApp[0] = tau * f1[0] - f2[0] + Cx[0];
-    ChebApp[1] = tau * f1[1] - f2[1] + Cy[0];
-    ChebApp[2] = tau * f1[2] - f2[2] + Cz[0];
+    double c0_vals[3] = {
+            Cx[0],
+            Cy[0],
+            Cz[0]
+    };
+    Matrix C0(1, 3, c0_vals, 3);
+
+    Matrix ChebApp = f1.opsc(tau) - f2 + C0;
 
     return ChebApp;
 }

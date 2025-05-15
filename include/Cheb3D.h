@@ -10,10 +10,11 @@
 #define PROYECTOTALLERI_CHEB3D_H
 
 #include <iostream>
+#include "../include/Matrix.h"
 #include <vector>
 using namespace std;
 
-vector<double> Cheb3D(double t, int N, double Ta, double Tb,const vector<double>& Cx,const vector<double>& Cy,const vector<double>& Cz);
+Matrix Cheb3D(double t, int N, double Ta, double Tb, const vector<double>& Cx, const vector<double>& Cy, const vector<double>& Cz);
 
 
 #endif //PROYECTOTALLERI_CHEB3D_H

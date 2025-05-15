@@ -8,7 +8,7 @@
 
 #include <array>
 #include <cmath>
-#include "Matrix.h"
+#include "../include/Matrix.h"
 
 using namespace std;
 

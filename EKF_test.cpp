@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <stdio.h>
 #include <math.h>
+#include <vector>
 #include "../include/Mjday.h"
 #include "../include/Matrix.h"
 #include "../include/R_x.h"
@@ -14,6 +15,8 @@
 #include "../include/Frac.h"
 #include "../include/AccelPointMass.h"
 #include "../include/Sat_const.h"
+#include "../include/Cheb3D.h"
+#include "JPL_Eph_DE430.h"
 
 #define TOL_ 10e-14
 
@@ -134,20 +137,49 @@ int frac_01(){
 
 int accel_point_mass_01()
 {
-    double r_vals[] = {7000.0, 0.0, 0.0};
-    double s_vals[] = {0.0, 0.0, 0.0};
+    double r_vals[] = {2.0, 0.0, 0.0};
+    double s_vals[] = {1.0, 0.0, 0.0};
 
     Matrix r(3, 1, r_vals, 3);
     Matrix s(3, 1, s_vals, 3);
 
-    Matrix a = AccelPointMass(r, s, GM_Earth);
+    Matrix a = AccelPointMass(r, s, 1);
 
-    double norm_r = r.norm();
-    double expected_ax = -GM_Earth * (1.0 / pow(norm_r, 3)) * r(1,1);
-
-    _assert(fabs(a(1,1) - expected_ax) < TOL_);
+    _assert(fabs(a(1,1)+ 2.0) < TOL_);
     _assert(fabs(a(2,1)) < TOL_);
     _assert(fabs(a(3,1)) < TOL_);
+
+    return 0;
+}
+
+int Cheb3D_01() {
+
+    double Ta = 0.0, Tb = 1.0;
+    int N = 1;
+    double t = 0.5;
+
+    vector<double> Cx = { 2.0 };
+    vector<double> Cy = { 3.0 };
+    vector<double> Cz = { 4.0 };
+
+    Matrix result = Cheb3D(t, N, Ta, Tb, Cx, Cy, Cz);
+
+    // Debe devolver exactamente [2, 3, 4]
+    _assert(fabs(result(1,1) - 2.0) < TOL_);
+    _assert(fabs(result(1,2) - 3.0) < TOL_);
+    _assert(fabs(result(1,3) - 4.0) < TOL_);
+
+    return 0;
+}
+
+int JPL_Eph_DE430_01() {
+
+    double Mjd_TDB = 59000.0;
+    Ephemeris eph = JPL_Eph_DE430(Mjd_TDB);
+    _assert(eph.r_Earth.getFilas()   == 3);
+    _assert(eph.r_Earth.getColumnas() == 1);
+    _assert(eph.r_Sun.getFilas()     == 3);
+    _assert(eph.r_Sun.getColumnas()   == 1);
 
     return 0;
 }
@@ -165,6 +197,8 @@ int all_tests()
     _verify(gmst_01);
     _verify(Legendre_01);
     _verify(accel_point_mass_01);
+    _verify(Cheb3D_01);
+    _verify(JPL_Eph_DE430_01);
 
     return 0;
 }
