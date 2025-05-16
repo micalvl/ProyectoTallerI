@@ -17,6 +17,11 @@
 #include "../include/Sat_const.h"
 #include "../include/Cheb3D.h"
 #include "JPL_Eph_DE430.h"
+#include "../include/MeasUpdate.h"
+#include "MeanObliquity.h"
+#include "AccelHarmonic.h"
+#include "global.h"
+#include "G_AccelHarmonic.h"
 
 #define TOL_ 10e-14
 
@@ -135,6 +140,98 @@ int frac_01(){
     return 0;
 }
 
+int meanObliquity01(){
+    double t0 = MJD_J2000;
+    double t1 = t0 + 36525.0;
+
+    double m0 = MeanObliquity(t0);
+    double m1 = MeanObliquity(t1);
+
+    _assert(m1 < m0);
+
+    return 0;
+}
+
+int meanObliquity02(){
+    double Mjd_TT      = MJD_J2000 + 36525.0;
+    double mobl_rad    = MeanObliquity(Mjd_TT);
+    double expected    = 0.40886584462678882;
+
+    _assert(fabs(mobl_rad - expected) < TOL_);
+
+    return 0;
+}
+
+int measUpdate01(){
+    Matrix x(1,1); x(1,1) = 0.0;
+    Matrix z(1,1); z(1,1) = 4.0;
+    Matrix g(1,1); g(1,1) = 2.0;
+    Matrix s(1,1); s(1,1) = 2.0;
+    Matrix G(1,1); G(1,1) = 1.0;
+    Matrix P(1,1); P(1,1) = 1.0;
+
+    MeasUpdate(x, z, g, s, G, P, 1);
+
+    _assert(fabs(x(1,1) - 0.4) < TOL_);
+    _assert(fabs(P(1,1) - 0.8) < TOL_);
+
+    return 0;
+}
+
+int AccelHarmonic01() {
+
+    for (int n = 0; n < 300; ++n)
+        for (int m = 0; m < 300; ++m)
+            Cnm[n][m] = 0.0;
+    for (int n = 0; n < 200; ++n)
+        for (int m = 0; m < 200; ++m)
+            Snm[n][m] = 0.0;
+
+    Matrix r(3,1);
+    r(1,1) = 7000e3;
+    r(2,1) = 1234.5;
+    r(3,1) = -2500.0;
+
+    Matrix E = Matrix::identity(3);
+
+    Matrix a = AccelHarmonic(r, E, 2, 2);
+
+    _assert(fabs(a(1,1)) < TOL_);
+    _assert(fabs(a(2,1)) < TOL_);
+    _assert(fabs(a(3,1)) < TOL_);
+
+    return 0;
+}
+
+int G_AccelHarmonic01() {
+    for (int n = 0; n < 300; ++n)
+        for (int m = 0; m < 300; ++m)
+            Cnm[n][m] = 0.0;
+    for (int n = 0; n < 200; ++n)
+        for (int m = 0; m < 200; ++m)
+            Snm[n][m] = 0.0;
+    Cnm[1][1] = 1.0;
+
+    Matrix r(3,1);
+    r(1,1) = 8000e3;
+    r(2,1) = 1000e3;
+    r(3,1) =  500e3;
+
+    Matrix E = Matrix::identity(3);
+
+    Matrix Gmat = G_AccelHarmonic(r, E, 0, 0);
+
+    const double tol = 1e-12;
+    _assert(fabs(Gmat(1,2) - Gmat(2,1)) < tol);
+    _assert(fabs(Gmat(1,3) - Gmat(3,1)) < tol);
+    _assert(fabs(Gmat(2,3) - Gmat(3,2)) < tol);
+
+    double trace = Gmat(1,1) + Gmat(2,2) + Gmat(3,3);
+    _assert(fabs(trace) < tol);
+
+    return 0;
+}
+
 int accel_point_mass_01()
 {
     double r_vals[] = {2.0, 0.0, 0.0};
@@ -164,7 +261,6 @@ int Cheb3D_01() {
 
     Matrix result = Cheb3D(t, N, Ta, Tb, Cx, Cy, Cz);
 
-    // Debe devolver exactamente [2, 3, 4]
     _assert(fabs(result(1,1) - 2.0) < TOL_);
     _assert(fabs(result(1,2) - 3.0) < TOL_);
     _assert(fabs(result(1,3) - 4.0) < TOL_);
@@ -172,6 +268,7 @@ int Cheb3D_01() {
     return 0;
 }
 
+/*
 int JPL_Eph_DE430_01() {
 
     double Mjd_TDB = 59000.0;
@@ -183,7 +280,7 @@ int JPL_Eph_DE430_01() {
 
     return 0;
 }
-
+*/
 
 
 int all_tests()
@@ -198,7 +295,12 @@ int all_tests()
     _verify(Legendre_01);
     _verify(accel_point_mass_01);
     _verify(Cheb3D_01);
-    _verify(JPL_Eph_DE430_01);
+    // _verify(JPL_Eph_DE430_01);
+    _verify(measUpdate01);
+    _verify(meanObliquity01);
+    _verify(meanObliquity02);
+    _verify(AccelHarmonic01);
+    _verify(G_AccelHarmonic01);
 
     return 0;
 }

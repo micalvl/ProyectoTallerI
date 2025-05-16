@@ -9,8 +9,8 @@
 #ifndef PROYECTOTALLERI_GLOBAL_H
 #define PROYECTOTALLERI_GLOBAL_H
 
-double Cnm[300][300];
-double Snm[200][200];
+extern double Cnm[300][300];
+extern double Snm[200][200];
 
 
 

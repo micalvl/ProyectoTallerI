@@ -42,9 +42,6 @@ Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max){
     Matrix pnm(300,300);
     Matrix dpnm(300,300);
 
-    extern double Cnm[300][300];
-    extern double Snm[200][200];
-
     r_ref = 6378.1363e3;   // Earth's radius [m]; GGM03S
     gm    = 398600.4415e9; // [m^3/s^2]; GGM03S
 

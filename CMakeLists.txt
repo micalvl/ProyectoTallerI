@@ -42,7 +42,7 @@ add_executable(ProyectoTallerI
         src/EqnEquinox.h
         src/Frac.cpp
         src/G_AccelHarmonic.cpp
-        src/G_AccelHarmonic.h
+        include/G_AccelHarmonic.h
         src/gast.cpp
         src/gast.h
         src/Geodetic.cpp
@@ -67,7 +67,7 @@ add_executable(ProyectoTallerI
         src/MeanObliquity.cpp
         include/MeanObliquity.h
         src/MeasUpdate.cpp
-        src/MeasUpdate.h
+        include/MeasUpdate.h
         src/Mjday.cpp
         src/Mjday_TDB.cpp
         include/Mjday_TDB.h
@@ -96,4 +96,5 @@ add_executable(ProyectoTallerI
         src/VarEqn.h
         EFK_GEOS3.cpp
         EKF_test.cpp
-        include/global.h)
+        include/global.h
+        src/global.cpp)

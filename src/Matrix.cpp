@@ -133,7 +133,7 @@ double Matrix::norm() const {
     return sqrt(suma);
 }
 
-void printMatrixValues(float** arr, int n, int m){
+void Matrix::printMatrixValues(float** arr, int n, int m){
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
             cout<<arr[i][j]<<"\t";
@@ -143,7 +143,7 @@ void printMatrixValues(float** arr, int n, int m){
     return;
 }
 
-void printInverseMatrix(float** arr, int n, int m){
+void Matrix::printInverseMatrix(float** arr, int n, int m){
     for (int i = 0; i < n; i++) {
         for (int j = n; j < m; j++) {
             printf("%.3f\t", arr[i][j]);
@@ -153,7 +153,7 @@ void printInverseMatrix(float** arr, int n, int m){
     return;
 }
 
-void findInvMatGaussJordan(float** mat, int order){
+void Matrix::findInvMatGaussJordan(float** mat, int order){
     float temp;
     printf("The inverse of matrix : A = \n");
     printMatrixValues(mat, order, order);
@@ -189,6 +189,60 @@ void findInvMatGaussJordan(float** mat, int order){
     cout<<"A' =\n";
     printInverseMatrix(mat, order, 2 * order);
     return;
+}
+
+Matrix Matrix::inverse(){
+    int n = fil;
+    double** A = new double*[n];
+    for (int i = 0; i < n; ++i) {
+        A[i] = new double[2*n];
+        for (int j = 0; j < n; ++j) {
+            A[i][j] = (*this)(i+1, j+1);
+        }
+        for (int j = 0; j < n; ++j) {
+            A[i][n+j] = (i == j ? 1.0 : 0.0);
+        }
+    }
+
+    for (int p = 0; p < n; ++p) {
+        int maxr = p;
+        double maxv = fabs(A[p][p]);
+        for (int r = p+1; r < n; ++r) {
+            double v = fabs(A[r][p]);
+            if (v > maxv) {
+                maxv = v;
+                maxr = r;
+            }
+        }
+
+        if (maxr != p) {
+            std::swap(A[p], A[maxr]);
+        }
+
+        double diag = A[p][p];
+        for (int c = 0; c < 2*n; ++c)
+            A[p][c] /= diag;
+
+        for (int r = 0; r < n; ++r) {
+            if (r == p) continue;
+            double factor = A[r][p];
+            for (int c = 0; c < 2*n; ++c)
+                A[r][c] -= factor * A[p][c];
+        }
+    }
+
+    Matrix inv(n, n);
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            inv(i+1, j+1) = A[i][n + j];
+        }
+    }
+
+    for (int i = 0; i < n; ++i)
+        delete[] A[i];
+    delete[] A;
+
+    return inv;
 }
 
 int Matrix::getFilas() const { return fil; }

@@ -7,6 +7,7 @@
 
 #include "../include/Matrix.h"
 #include <vector>
+using namespace std;
 
 struct Ephemeris {
     Matrix r_Mercury, r_Venus, r_Earth, r_Mars, r_Jupiter,
@@ -30,14 +31,6 @@ struct Ephemeris {
 
 Ephemeris JPL_Eph_DE430(double Mjd_TDB);
 
-static const int R = /* tu número de filas */;
-static const int C = /* tu número de columnas */;
-
-// Un arreglo plano con R*C valores, en orden fila-por-fila:
-static double PC_data[R*C] = { /* ...todos los datos de PC...*/ };
-
-// Esta es la única definición de PC en todo el programa:
-Matrix PC(R, C, const_cast<double*>(PC_data), R*C);
 
 
 #endif //PROYECTOTALLERI_JPL_EPH_DE430_H

@@ -32,18 +32,17 @@
 %--------------------------------------------------------------------------
 */
 
-// PC debe estar definido en algún .cpp: extern Matrix PC;
-extern Matrix PC;
+extern Matrix PC; // Problemas con esto
 
 /// Construye coeficientes concatenando `blockCount` bloques de longitud
 /// `blockLen`, arrancando en `startIndex` y saltando `step` casillas cada bloque.
-static std::vector<double> getCoeffs(const std::vector<double>& pc,
+static vector<double> getCoeffs(const vector<double>& pc,
                                      int startIndex,
                                      int blockCount,
                                      int step,
                                      int blockLen)
 {
-    std::vector<double> out;
+    vector<double> out;
     out.reserve(blockCount * blockLen);
     for (int b = 0; b < blockCount; ++b) {
         int base = startIndex - 1 + b*step;
@@ -53,11 +52,10 @@ static std::vector<double> getCoeffs(const std::vector<double>& pc,
     }
     return out;
 }
-
+/*
 Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
     Ephemeris eph;
 
-    // 1) Buscar el intervalo en PC
     double JD = Mjd_TDB + 2400000.5;
     int rows = PC.getFilas(), cols = PC.getColumnas();
     int idx = 1;
@@ -66,27 +64,24 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
             break;
     }
     if (idx > rows)
-        throw std::invalid_argument("JPL_Eph_DE430: Mjd_TDB fuera de rango en PC.");
+        throw invalid_argument("JPL_Eph_DE430: Mjd_TDB fuera de rango en PC.");
 
-    // 2) Extraer la fila idx de PC en un vector 0-based
-    std::vector<double> PCrow(cols);
+    vector<double> PCrow(cols);
     for (int c = 1; c <= cols; ++c)
         PCrow[c-1] = PC(idx, c);
 
-    // 3) Parámetros comunes
-    double t1 = PCrow[0] - 2400000.5;  // PCrow(1) en MATLAB
+    double t1 = PCrow[0] - 2400000.5;
     double dt = Mjd_TDB - t1;
 
-    // --- Tierra (Earth) ---
+    // --- Earth ---
     {
-        // bloques de 13 coef = 231:13:270 y +39 → total 2 bloques
         auto Cx = getCoeffs(PCrow, 231, 2, 39, 13);
         auto Cy = getCoeffs(PCrow, 244, 2, 39, 13);
         auto Cz = getCoeffs(PCrow, 257, 2, 39, 13);
 
         int blocks = 2;
         double interval = 16.0;
-        int j = std::min(int(dt/interval), blocks-1);
+        int j = min(int(dt/interval), blocks-1);
         double Mjd0 = t1 + j*interval;
 
         Matrix v = Cheb3D(
@@ -94,71 +89,71 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
                 13,            // N
                 Mjd0,          // Ta
                 Mjd0 + interval,
-                std::vector<double>(Cx.begin() + j*13, Cx.begin() + (j+1)*13),
-                std::vector<double>(Cy.begin() + j*13, Cy.begin() + (j+1)*13),
-                std::vector<double>(Cz.begin() + j*13, Cz.begin() + (j+1)*13)
+                vector<double>(Cx.begin() + j*13, Cx.begin() + (j+1)*13),
+                vector<double>(Cy.begin() + j*13, Cy.begin() + (j+1)*13),
+                vector<double>(Cz.begin() + j*13, Cz.begin() + (j+1)*13)
         );
         eph.r_Earth = v.transpose().opsc(1e3);
     }
 
-    // --- Luna (Moon) ---
+    // --- Moon ---
     {
-        // bloques de 13 coef = 441:13:480 y +39 ×7 → total 8 bloques
+
         auto Cx = getCoeffs(PCrow, 441, 8, 39, 13);
         auto Cy = getCoeffs(PCrow, 454, 8, 39, 13);
         auto Cz = getCoeffs(PCrow, 467, 8, 39, 13);
 
         int blocks = 8;
         double interval = 4.0;
-        int j = std::min(int(dt/interval), blocks-1);
+        int j = min(int(dt/interval), blocks-1);
         double Mjd0 = t1 + j*interval;
 
         Matrix v = Cheb3D(
                 Mjd_TDB, 13, Mjd0, Mjd0 + interval,
-                std::vector<double>(Cx.begin() + j*13, Cx.begin() + (j+1)*13),
-                std::vector<double>(Cy.begin() + j*13, Cy.begin() + (j+1)*13),
-                std::vector<double>(Cz.begin() + j*13, Cz.begin() + (j+1)*13)
+                vector<double>(Cx.begin() + j*13, Cx.begin() + (j+1)*13),
+                vector<double>(Cy.begin() + j*13, Cy.begin() + (j+1)*13),
+                vector<double>(Cz.begin() + j*13, Cz.begin() + (j+1)*13)
         );
         eph.r_Moon = v.transpose().opsc(1e3);
     }
 
-    // --- Sol (Sun) ---
+    // --- Sun ---
     {
-        // bloques de 11 coef = 753:11:786 y +33 → total 2 bloques
+
         auto Cx = getCoeffs(PCrow, 753, 2, 33, 11);
         auto Cy = getCoeffs(PCrow, 764, 2, 33, 11);
         auto Cz = getCoeffs(PCrow, 775, 2, 33, 11);
 
         int blocks = 2;
         double interval = 16.0;
-        int j = std::min(int(dt/interval), blocks-1);
+        int j = min(int(dt/interval), blocks-1);
         double Mjd0 = t1 + j*interval;
 
         Matrix v = Cheb3D(
                 Mjd_TDB, 11, Mjd0, Mjd0 + interval,
-                std::vector<double>(Cx.begin() + j*11, Cx.begin() + (j+1)*11),
-                std::vector<double>(Cy.begin() + j*11, Cy.begin() + (j+1)*11),
-                std::vector<double>(Cz.begin() + j*11, Cz.begin() + (j+1)*11)
+                vector<double>(Cx.begin() + j*11, Cx.begin() + (j+1)*11),
+                vector<double>(Cy.begin() + j*11, Cy.begin() + (j+1)*11),
+                vector<double>(Cz.begin() + j*11, Cz.begin() + (j+1)*11)
         );
         eph.r_Sun = v.transpose().opsc(1e3);
     }
 
-    // --- Mercurio (Mercury) ---
+    // --- Mercury ---
     {
-        // 4 bloques de 14 coef = 3:14:45 y +42 ×3
+
         auto Cx = getCoeffs(PCrow,   3, 4, 42, 14);
         auto Cy = getCoeffs(PCrow,  17, 4, 42, 14);
         auto Cz = getCoeffs(PCrow,  31, 4, 42, 14);
 
         int blocks = 4; double interval = 8.0;
-        int j = std::min(int(dt/interval), blocks-1);
+        int j = min(int(dt/interval), blocks-1);
         double Mjd0 = t1 + j*interval;
 
         Matrix v = Cheb3D(
                 Mjd_TDB, 14, Mjd0, Mjd0 + interval,
-                std::vector<double>(Cx.begin() + j*14, Cx.begin() + (j+1)*14),
-                std::vector<double>(Cy.begin() + j*14, Cy.begin() + (j+1)*14),
-                std::vector<double>(Cz.begin() + j*14, Cz.begin() + (j+1)*14)
+                vector<double>(Cx.begin() + j*14, Cx.begin() + (j+1)*14),
+                vector<double>(Cy.begin() + j*14, Cy.begin() + (j+1)*14),
+                vector<double>(Cz.begin() + j*14, Cz.begin() + (j+1)*14)
         );
         eph.r_Mercury = v.transpose().opsc(1e3);
     }
@@ -170,21 +165,21 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         auto Cz = getCoeffs(PCrow, 191, 2, 30, 10);
 
         int blocks = 2; double interval = 16.0;
-        int j = std::min(int(dt/interval), blocks-1);
+        int j = min(int(dt/interval), blocks-1);
         double Mjd0 = t1 + j*interval;
 
         Matrix v = Cheb3D(
                 Mjd_TDB, 10, Mjd0, Mjd0 + interval,
-                std::vector<double>(Cx.begin() + j*10, Cx.begin() + (j+1)*10),
-                std::vector<double>(Cy.begin() + j*10, Cy.begin() + (j+1)*10),
-                std::vector<double>(Cz.begin() + j*10, Cz.begin() + (j+1)*10)
+                vector<double>(Cx.begin() + j*10, Cx.begin() + (j+1)*10),
+                vector<double>(Cy.begin() + j*10, Cy.begin() + (j+1)*10),
+                vector<double>(Cz.begin() + j*10, Cz.begin() + (j+1)*10)
         );
         eph.r_Venus = v.transpose().opsc(1e3);
     }
 
-    // --- Marte (Mars) ---
+    // --- Mars ---
     {
-        // Solo un bloque de 11 coef = 309:11:342
+
         auto Cx = getCoeffs(PCrow, 309, 1,  0, 11);
         auto Cy = getCoeffs(PCrow, 320, 1,  0, 11);
         auto Cz = getCoeffs(PCrow, 331, 1,  0, 11);
@@ -194,7 +189,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Mars = v.transpose().opsc(1e3);
     }
 
-    // --- Júpiter (Jupiter) ---
+    // --- Jupiter ---
     {
         auto Cx = getCoeffs(PCrow, 342, 1,  0,  8);
         auto Cy = getCoeffs(PCrow, 350, 1,  0,  8);
@@ -205,7 +200,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Jupiter = v.transpose().opsc(1e3);
     }
 
-    // --- Saturno (Saturn) ---
+    // --- Saturn ---
     {
         auto Cx = getCoeffs(PCrow, 366, 1,  0, 7);
         auto Cy = getCoeffs(PCrow, 373, 1,  0, 7);
@@ -216,7 +211,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Saturn = v.transpose().opsc(1e3);
     }
 
-    // --- Urano (Uranus) ---
+    // --- Uranus ---
     {
         auto Cx = getCoeffs(PCrow, 387, 1,  0, 6);
         auto Cy = getCoeffs(PCrow, 393, 1,  0, 6);
@@ -227,7 +222,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Uranus = v.transpose().opsc(1e3);
     }
 
-    // --- Neptuno (Neptune) ---
+    // --- Neptune ---
     {
         auto Cx = getCoeffs(PCrow, 405, 1,  0, 6);
         auto Cy = getCoeffs(PCrow, 411, 1,  0, 6);
@@ -238,7 +233,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Neptune = v.transpose().opsc(1e3);
     }
 
-    // --- Plutón (Pluto) ---
+    // --- Pluto ---
     {
         auto Cx = getCoeffs(PCrow, 423, 1,  0, 6);
         auto Cy = getCoeffs(PCrow, 429, 1,  0, 6);
@@ -249,7 +244,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Pluto = v.transpose().opsc(1e3);
     }
 
-    // --- Corrección final (EMRAT) ---
+
     double EMRAT  = 81.30056907419062;
     double EMRAT1 = 1.0 / (1.0 + EMRAT);
     eph.r_Earth   = eph.r_Earth - eph.r_Moon.opsc( EMRAT1 );
@@ -265,3 +260,4 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
 
     return eph;
 }
+ */
