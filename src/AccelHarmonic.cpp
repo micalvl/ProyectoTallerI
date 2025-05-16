@@ -39,8 +39,6 @@ using namespace std;
 
 Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max){
     double gm, d, lon, r_ref, dUdr, dUdlatgc, dUdlon, q3, q2, q1, latgc, b1, b2, b3, r2xy, ax, ay, az;
-    Matrix pnm(300,300);
-    Matrix dpnm(300,300);
 
     r_ref = 6378.1363e3;   // Earth's radius [m]; GGM03S
     gm    = 398600.4415e9; // [m^3/s^2]; GGM03S
@@ -51,15 +49,17 @@ Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max){
 // Auxiliary quantities
     d = r_bf.norm();
     // distance
-    latgc = asin(r_bf(2,0)/d);
-    lon = atan2(r_bf(1,0),r_bf(0,0));
+    latgc = asin(r_bf(3,1)/d);
+    lon = atan2(r_bf(2,1),r_bf(1,1));
 
+    Matrix pnm(300,300);
+    Matrix dpnm(300,300);
     Legendre(n_max,m_max,latgc, pnm, dpnm);
 
-    dUdr = 0;
-    dUdlatgc = 0;
-    dUdlon = 0;
-    q3 = 0; q2 = q3; q1 = q2;
+    dUdr = 0.0;
+    dUdlatgc = 0.0;
+    dUdlon = 0.0;
+    q3 = 0.0; q2 = q3; q1 = q2;
 
     for (int n=0; n<= n_max; n++){
         b1 = (-gm/pow(d,2)*pow((r_ref/d),2))*(n+1);
@@ -81,16 +81,16 @@ Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max){
 
 
     // Body-fixed acceleration
-    r2xy = pow(r_bf(0, 0), 2) + pow(r_bf(1, 0), 2);
+    r2xy = pow(r_bf(1, 1), 2) + pow(r_bf(2, 1), 2);
 
-    ax = (1.0 / d * dUdr - r_bf(2, 0) / (d * d * sqrt(r2xy)) * dUdlatgc) * r_bf(0, 0) - (1.0 / r2xy * dUdlon) * r_bf(1, 0);
-    ay = (1.0 / d * dUdr - r_bf(2, 0) / (d * d * sqrt(r2xy)) * dUdlatgc) * r_bf(1, 0) + (1.0 / r2xy * dUdlon) * r_bf(0, 0);
-    az = (1.0 / d * dUdr) * r_bf(2, 0) + (sqrt(r2xy) / (d * d)) * dUdlatgc;
+    ax = (1.0 / d * dUdr - r_bf(3, 1) / (d * d * sqrt(r2xy)) * dUdlatgc) * r_bf(1, 1) - (1.0 / r2xy * dUdlon) * r_bf(2, 1);
+    ay = (1.0 / d * dUdr - r_bf(3, 1) / (d * d * sqrt(r2xy)) * dUdlatgc) * r_bf(2, 1) + (1.0 / r2xy * dUdlon) * r_bf(1, 1);
+    az = (1.0 / d * dUdr) * r_bf(3, 1) + (sqrt(r2xy) / (d * d)) * dUdlatgc;
 
     Matrix a_bf(3, 1);
-    a_bf(0, 0) = ax;
-    a_bf(1, 0) = ay;
-    a_bf(2, 0) = az; // Inertial acceleration
+    a_bf(1, 1) = ax;
+    a_bf(2, 1) = ay;
+    a_bf(3, 1) = az; // Inertial acceleration
 
     Matrix a = E*a_bf;
 

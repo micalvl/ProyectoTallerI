@@ -61,10 +61,20 @@ Matrix::~Matrix()
 
 Matrix& Matrix::operator=(const Matrix& matrix2)
 {
-    for (int i = 0; i < fil; i++)
-        for (int j = 0; j < col; j++)
-            this->matrix[i][j] = matrix2.matrix[i][j];
+    if (this != &matrix2) {
+        if (fil != matrix2.fil || col != matrix2.col) {
+            for (int i = 0; i < fil; ++i) delete[] matrix[i];
+            delete[] matrix;
+            fil = matrix2.fil;
+            col = matrix2.col;
 
+            initMatrix();
+        }
+
+        for (int i = 0; i < fil; ++i)
+            for (int j = 0; j < col; ++j)
+                matrix[i][j] = matrix2.matrix[i][j];
+    }
     return *this;
 }
 
@@ -109,6 +119,14 @@ Matrix Matrix::operator*(const Matrix& matrix2) const
 
 double& Matrix::operator()(const int i, const int j) const
 {
+    // I created that to see where it be my error
+    if (i < 1 || i > fil || j < 1 || j > col) {
+        std::cerr
+                << "ERROR: Matrix index out of range ("
+                << i << "," << j << ") for Matrix of size "
+                << fil << "x" << col << "\n";
+        std::abort();
+    }
     return matrix[i-1][j-1];
 }
 

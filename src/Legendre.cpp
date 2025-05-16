@@ -17,10 +17,15 @@ void Legendre(int n, int m, double fi, Matrix &pnm, Matrix &dpnm) {
     pnm = Matrix(n + 1, m + 1);
     dpnm = Matrix(n + 1, m + 1);
 
-    pnm(1, 1) = 1;
-    dpnm(1, 1) = 0;
-    pnm(2, 2) = sqrt(3) * cos(fi);
-    dpnm(2, 2) = -sqrt(3) * sin(fi);
+    pnm(1, 1) = 1.0;
+    dpnm(1, 1) = 0.0;
+
+    if (n >= 1 && m >= 1) {
+        double sq3 = sqrt(3.0);
+        pnm(2,2)  = sq3 * cos(fi);
+        dpnm(2,2) = -sq3 * sin(fi);
+    }
+
 
     //diagonal coefficients
     for (int i = 2; i < n; i++) {

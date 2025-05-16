@@ -78,7 +78,7 @@ add_executable(ProyectoTallerI
         src/PoleMatrix.cpp
         src/PoleMatrix.h
         src/Position.cpp
-        src/Position.h
+        include/Position.h
         src/PrecMatrix.cpp
         src/PrecMatrix.h
         src/R_x.cpp

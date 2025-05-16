@@ -6,9 +6,11 @@
 #define PROYECTOTALLERI_ANGL_H
 
 
-class angl {
+#include "Matrix.h"
+#include <cmath>
+using namespace std;
 
-};
+double angl(const Matrix& vec1, const Matrix& vec2);
 
 
 #endif //PROYECTOTALLERI_ANGL_H

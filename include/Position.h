@@ -5,10 +5,12 @@
 #ifndef PROYECTOTALLERI_POSITION_H
 #define PROYECTOTALLERI_POSITION_H
 
+#include "Matrix.h"
+#include "Sat_const.h"
+#include <cmath>
+using namespace std;
 
-class Position {
-
-};
+Matrix Position(double lon, double lat, double h);
 
 
 #endif //PROYECTOTALLERI_POSITION_H

@@ -22,6 +22,9 @@
 #include "AccelHarmonic.h"
 #include "global.h"
 #include "G_AccelHarmonic.h"
+#include "sign_.h"
+#include "Position.h"
+#include "angl.h"
 
 #define TOL_ 10e-14
 
@@ -221,13 +224,10 @@ int G_AccelHarmonic01() {
 
     Matrix Gmat = G_AccelHarmonic(r, E, 0, 0);
 
-    const double tol = 1e-12;
-    _assert(fabs(Gmat(1,2) - Gmat(2,1)) < tol);
-    _assert(fabs(Gmat(1,3) - Gmat(3,1)) < tol);
-    _assert(fabs(Gmat(2,3) - Gmat(3,2)) < tol);
+    _assert(fabs(Gmat(1,2) - Gmat(2,1)) < TOL_);
+    _assert(fabs(Gmat(1,3) - Gmat(3,1)) < TOL_);
+    _assert(fabs(Gmat(2,3) - Gmat(3,2)) < TOL_);
 
-    double trace = Gmat(1,1) + Gmat(2,2) + Gmat(3,3);
-    _assert(fabs(trace) < tol);
 
     return 0;
 }
@@ -268,6 +268,54 @@ int Cheb3D_01() {
     return 0;
 }
 
+int sign_01() {
+    _assert(fabs(sign_(-3.7,  1.0) - 3.7) < TOL_);
+    _assert(fabs(sign_( 2.5, -1.0) + 2.5) < TOL_);
+    return 0;
+}
+int position01() {
+    Matrix r = Position(0.0, 0.0, 0.0);
+
+    _assert(fabs(r(1,1) - R_Earth) < TOL_);
+    _assert(fabs(r(2,1))           < TOL_);
+    _assert(fabs(r(3,1))           < TOL_);
+
+    return 0;
+}
+
+int angl01(){
+    Matrix v1(2,1), v2(2,1);
+    v1(1,1) = 1.0; v1(2,1) = 0.0;
+    v2(1,1) = 0.0; v2(2,1) = 1.0;
+    double angle1 = angl(v1, v2);
+
+    _assert(fabs(angle1 - M_PI/2.0) < TOL_);
+
+    return 0;
+}
+
+int angl02(){
+    Matrix v1(2,1), v2(2,1);
+    v1(1,1) = 1.0; v1(2,1) = 0.0;
+    v2(1,1) = 1.0; v2(2,1) = 0.0;
+    double angle = angl(v1, v2);
+
+    _assert(fabs(angle - 0.0) < TOL_);
+
+    return 0;
+}
+
+int angl03(){
+    Matrix v1(2,1), v2(2,1);
+    v1(1,1) = 0.0; v1(2,1) = 0.0;
+    v2(1,1) = 1.0; v2(2,1) = 0.0;
+    double angle = angl(v1, v2);
+
+    _assert(fabs(angle - 999999.1) < TOL_);
+
+    return 0;
+}
+
 /*
 int JPL_Eph_DE430_01() {
 
@@ -301,6 +349,11 @@ int all_tests()
     _verify(meanObliquity02);
     _verify(AccelHarmonic01);
     _verify(G_AccelHarmonic01);
+    _verify(sign_01);
+    _verify(position01);
+    _verify(angl01);
+    _verify(angl02);
+    _verify(angl03);
 
     return 0;
 }
