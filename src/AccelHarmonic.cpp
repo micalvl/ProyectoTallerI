@@ -67,9 +67,9 @@ Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max){
         b3 =  (gm/d)*pow((r_ref/d),n);
 
         for (int m=0; m<=m_max; m++){
-            q1 = q1 + pnm(n+1,m+1)*(Cnm[n+1][m+1]*cos(m*lon)+Snm[n+1][m+1]*sin(m*lon));
-            q2 = q2 + dpnm(n+1,m+1)*(Cnm[n+1][m+1]*cos(m*lon)+Snm[n+1][m+1]*sin(m*lon));
-            q3 = q3 + m*pnm(n+1,m+1)*(Snm[n+1][m+1]*cos(m*lon)-Cnm[n+1][m+1]*sin(m*lon));
+            q1 = q1 + pnm(n+1,m+1)*(Cnm(n+1, m+1)*cos(m*lon)+Snm(n+1, m+1)*sin(m*lon));
+            q2 = q2 + dpnm(n+1,m+1)*(Cnm(n+1, m+1)*cos(m*lon)+Snm(n+1, m+1)*sin(m*lon));
+            q3 = q3 + m*pnm(n+1,m+1)*(Snm(n+1,m+1)*cos(m*lon)-Cnm(n+1, m+1)*sin(m*lon));
         }
 
         dUdr     = dUdr     + q1*b1;

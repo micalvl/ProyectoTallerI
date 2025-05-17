@@ -52,7 +52,7 @@ static vector<double> getCoeffs(const vector<double>& pc,
     }
     return out;
 }
-/*
+
 Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
     Ephemeris eph;
 
@@ -260,4 +260,3 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
 
     return eph;
 }
- */

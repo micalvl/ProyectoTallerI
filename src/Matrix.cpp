@@ -34,6 +34,8 @@ Matrix::Matrix(int fil, int col, double v[], int n): fil(fil), col(col)
         }
 }
 
+Matrix::Matrix() : fil(0), col(0), matrix(nullptr) {}
+
 Matrix::Matrix(const Matrix& m)
 {
     *this = m;
@@ -290,6 +292,10 @@ Matrix Matrix::opsc(double scalar) const {
         }
     }
     return result;
+}
+
+Matrix Matrix::zeros(int rows, int cols) {
+    return Matrix(rows, cols);
 }
 
 /*

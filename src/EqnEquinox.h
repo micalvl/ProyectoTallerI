@@ -5,10 +5,10 @@
 #ifndef PROYECTOTALLERI_EQNEQUINOX_H
 #define PROYECTOTALLERI_EQNEQUINOX_H
 
+#include "NutAngles.h"
+#include "MeanObliquity.h"
+#include <cmath>
 
-class EqnEquinox {
-
-};
-
+double EqnEquinox(double Mjd_TT);
 
 #endif //PROYECTOTALLERI_EQNEQUINOX_H

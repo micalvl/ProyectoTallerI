@@ -6,9 +6,11 @@
 #define PROYECTOTALLERI_NUTANGLES_H
 
 
-class NutAngles {
+#include "Matrix.h"
+#include "Sat_const.h"
+#include <cmath>
 
-};
+Matrix NutAngles(double Mjd_TT);
 
 
 #endif //PROYECTOTALLERI_NUTANGLES_H

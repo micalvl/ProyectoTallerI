@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <vector>
+#include <fstream>
 #include "../include/Mjday.h"
 #include "../include/Matrix.h"
 #include "../include/R_x.h"
@@ -25,6 +26,8 @@
 #include "sign_.h"
 #include "Position.h"
 #include "angl.h"
+#include "NutAngles.h"
+#include "EqnEquinox.h"
 
 #define TOL_ 10e-14
 
@@ -183,12 +186,15 @@ int measUpdate01(){
 
 int AccelHarmonic01() {
 
-    for (int n = 0; n < 300; ++n)
-        for (int m = 0; m < 300; ++m)
-            Cnm[n][m] = 0.0;
-    for (int n = 0; n < 200; ++n)
-        for (int m = 0; m < 200; ++m)
-            Snm[n][m] = 0.0;
+    Cnm = Matrix::zeros(301, 301);
+    Snm = Matrix::zeros(201,  201);
+
+    for (int n = 1; n < 300; ++n)
+        for (int m = 1; m < 300; ++m)
+            Cnm(n,m) = 0.0;
+    for (int n = 1; n < 200; ++n)
+        for (int m = 1; m < 200; ++m)
+            Snm(n,m) = 0.0;
 
     Matrix r(3,1);
     r(1,1) = 7000e3;
@@ -207,13 +213,16 @@ int AccelHarmonic01() {
 }
 
 int G_AccelHarmonic01() {
-    for (int n = 0; n < 300; ++n)
-        for (int m = 0; m < 300; ++m)
-            Cnm[n][m] = 0.0;
-    for (int n = 0; n < 200; ++n)
-        for (int m = 0; m < 200; ++m)
-            Snm[n][m] = 0.0;
-    Cnm[1][1] = 1.0;
+    Cnm = Matrix::zeros(301, 301);
+    Snm = Matrix::zeros(201,  201);
+
+    for (int n = 1; n < 300; ++n)
+        for (int m = 1; m < 300; ++m)
+            Cnm(n,m) = 0.0;
+    for (int n = 1; n < 200; ++n)
+        for (int m = 1; m < 200; ++m)
+            Snm(n,m) = 0.0;
+    Cnm(1,1) = 1.0;
 
     Matrix r(3,1);
     r(1,1) = 8000e3;
@@ -319,16 +328,69 @@ int angl03(){
 /*
 int JPL_Eph_DE430_01() {
 
-    double Mjd_TDB = 59000.0;
+    const char* path = "../data/DE430Coeff.txt";
+    ifstream infile(path);
+    _assert(infile.is_open());
+    int rowCount = 0;
+    string line;
+    while (std::getline(infile, line)) {
+        if (!line.empty()) ++rowCount;
+    }
+    infile.close();
+
+    // 2) Definir el número de columnas que queremos leer
+    const int colCount = 1020;
+
+    // 3) Llenar la tabla PC
+    DE430Coeff(rowCount, colCount);
+
+    // 4) Elegir una fecha válida en el primer intervalo de PC
+    double start = PC(1,1);
+    double end   = PC(1,2);
+    double Mjd_TDB = 0.5*(start + end);
+
+    // 5) Llamar a JPL_Eph_DE430
     Ephemeris eph = JPL_Eph_DE430(Mjd_TDB);
+
+    // 6) Comprobar dimensiones de salida
     _assert(eph.r_Earth.getFilas()   == 3);
     _assert(eph.r_Earth.getColumnas() == 1);
     _assert(eph.r_Sun.getFilas()     == 3);
     _assert(eph.r_Sun.getColumnas()   == 1);
 
+    // 7) Comprobar normas razonables
+    double normE = eph.r_Earth.norm();
+    _assert(normE > 0.0 && normE < 5e11);
+
+    double normS = eph.r_Sun.norm();
+    _assert(normS > 1e10 && normS < 3e11);
+
     return 0;
 }
 */
+
+int nutangles01(){
+    Matrix out = NutAngles(MJD_J2000);
+
+    _assert(out.getFilas()   == 2);
+    _assert(out.getColumnas()== 1);
+
+    double dpsi = out(1,1);
+    double deps = out(2,1);
+
+    _assert(fabs(dpsi) < 0.01);
+    _assert(fabs(deps) < 0.01);
+
+}
+
+int eqnEquinox01() {
+    // 1) En J2000, la ecuación de los equinoccios es prácticamente cero
+    double eq0 = EqnEquinox(MJD_J2000);
+    _assert(fabs(eq0) < TOL_);
+
+    return 0;
+}
+
 
 
 int all_tests()
@@ -343,7 +405,7 @@ int all_tests()
     _verify(Legendre_01);
     _verify(accel_point_mass_01);
     _verify(Cheb3D_01);
-    // _verify(JPL_Eph_DE430_01);
+    //_verify(JPL_Eph_DE430_01);
     _verify(measUpdate01);
     _verify(meanObliquity01);
     _verify(meanObliquity02);
@@ -354,6 +416,8 @@ int all_tests()
     _verify(angl01);
     _verify(angl02);
     _verify(angl03);
+    _verify(nutangles01);
+    _verify(eqnEquinox01);
 
     return 0;
 }

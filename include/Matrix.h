@@ -31,6 +31,8 @@ public:
      */
     Matrix(int fil, int col, double v[], int n);
 
+    Matrix();
+
     /**
      * @brief Copy constructor. Creates a new matrix as a copy of an existing one.
      *
@@ -102,6 +104,7 @@ public:
     void printInverseMatrix(float** arr, int n, int m);
     void findInvMatGaussJordan(float** mat, int order);
     Matrix inverse();
+    static Matrix zeros(int rows, int cols);
 
 
 private:
