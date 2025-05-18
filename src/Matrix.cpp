@@ -298,6 +298,22 @@ Matrix Matrix::zeros(int rows, int cols) {
     return Matrix(rows, cols);
 }
 
+Matrix Matrix::cross(const Matrix& a, const Matrix& b) {
+    Matrix c(3,1);
+    c(1,1) = a(2,1)*b(3,1) - a(3,1)*b(2,1);
+    c(2,1) = a(3,1)*b(1,1) - a(1,1)*b(3,1);
+    c(3,1) = a(1,1)*b(2,1) - a(2,1)*b(1,1);
+    return c;
+}
+
+
+double Matrix::dot(const Matrix& a, const Matrix& b) {
+    return a(1,1)*b(1,1)
+           + a(2,1)*b(2,1)
+           + a(3,1)*b(3,1);
+}
+
+
 /*
 int main(){
     int order = 3;

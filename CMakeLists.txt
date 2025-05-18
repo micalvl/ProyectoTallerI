@@ -21,7 +21,7 @@ add_executable(ProyectoTallerI
         src/AccelPointMass.cpp
         include/AccelPointMass.h
         src/angl.cpp
-        src/angl.h
+        include/angl.h
         src/anglesdr.cpp
         src/anglesdr.h
         src/anglesg.cpp
@@ -54,7 +54,7 @@ add_executable(ProyectoTallerI
         src/gmst.cpp
         include/gmst.h
         src/hgibbs.cpp
-        src/hgibbs.h
+        include/hgibbs.h
         src/IERS.cpp
         src/IERS.h
         src/JPL_Eph_DE430.cpp

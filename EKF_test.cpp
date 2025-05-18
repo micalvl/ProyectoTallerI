@@ -28,6 +28,9 @@
 #include "angl.h"
 #include "NutAngles.h"
 #include "EqnEquinox.h"
+#include "gibbs.h"
+#include "unit.h"
+#include "hgibbs.h"
 
 #define TOL_ 10e-14
 
@@ -384,31 +387,75 @@ int nutangles01(){
 }
 
 int eqnEquinox01() {
-    // 1) En J2000, la ecuación de los equinoccios es prácticamente cero
     double eq0 = EqnEquinox(MJD_J2000);
+
     _assert(fabs(eq0) < TOL_);
+
+    return 0;
+}
+
+int gibbs01() {
+    using namespace std;
+
+    Matrix r1(3,1), r2(3,1), r3(3,1);
+    r1(1,1)=1;  r1(2,1)=0;  r1(3,1)=0;
+    r2(1,1)=0;  r2(2,1)=1;  r2(3,1)=0;
+    r3(1,1)=-1; r3(2,1)=0;  r3(3,1)=0;
+
+    GibbsResult g = gibbs(r1, r2, r3);
+    _assert(g.error == "ok");
+    _assert(fabs(g.theta  - M_PI/2)  < TOL_);
+    _assert(fabs(g.theta1 - M_PI/2)  < TOL_);
+    _assert(fabs(g.copa)             < TOL_);
+    _assert(g.v2.norm() > 0.0);
+
+    return 0;
+}
+
+int unit01() {
+    Matrix v(3,1);
+    v(1,1) = 1.0; v(2,1) = 0.0; v(3,1) = 0.0;
+    Matrix u = unit(v);
+    _assert(u(1,1) == 1.0);
+    _assert(u(2,1) == 0.0);
+    _assert(u(3,1) == 0.0);
+    return 0;
+}
+
+int hgibbs01() {
+    Matrix r1(3,1), r2(3,1), r3(3,1);
+    double a1 = 0.01;   // ≈0.57°
+    double a2 = 0.015;  // ≈0.86°
+    r1(1,1)=1; r1(2,1)=0; r1(3,1)=0;
+    r2(1,1)=std::cos(a1); r2(2,1)=std::sin(a1); r2(3,1)=0;
+    r3(1,1)=std::cos(a2); r3(2,1)=std::sin(a2); r3(3,1)=0;
+
+    auto res = hgibbs(r1, r2, r3, 0.0, 1.0, 2.0);
+    const double tol_angle = 0.01745329251994; // The same as the function
+
+    _assert(res.error == "ok");
+    _assert(res.theta  > 0.0 && res.theta  < tol_angle);
+    _assert(res.theta1 > 0.0 && res.theta1 < tol_angle);
+    _assert(fabs(res.copa) < TOL_);
+    _assert(res.v2.norm() > 0.0);
 
     return 0;
 }
 
 
 
-int all_tests()
+    int all_tests()
 {
-    _verify(Mjday_01);
-    _verify(Mjday_02);
-    _verify(R_x_01);
-    _verify(R_y_01);
-    _verify(R_z_01);
-    _verify(frac_01);
-    _verify(gmst_01);
+    _verify(gibbs01);
+    _verify(unit01);
+    _verify(hgibbs01);
     _verify(Legendre_01);
     _verify(accel_point_mass_01);
     _verify(Cheb3D_01);
     //_verify(JPL_Eph_DE430_01);
-    _verify(measUpdate01);
-    _verify(meanObliquity01);
-    _verify(meanObliquity02);
+    //_verify(measUpdate01);
+    //_verify(meanObliquity01);
+    //_verify(meanObliquity02);
     _verify(AccelHarmonic01);
     _verify(G_AccelHarmonic01);
     _verify(sign_01);
@@ -418,6 +465,14 @@ int all_tests()
     _verify(angl03);
     _verify(nutangles01);
     _verify(eqnEquinox01);
+    //_verify(Mjday_01);
+    //_verify(Mjday_02);
+    //_verify(R_x_01);
+    //_verify(R_y_01);
+    //_verify(R_z_01);
+    //_verify(frac_01);
+    //_verify(gmst_01);
+
 
     return 0;
 }

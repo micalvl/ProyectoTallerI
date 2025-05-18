@@ -5,10 +5,9 @@
 #ifndef PROYECTOTALLERI_UNIT_H
 #define PROYECTOTALLERI_UNIT_H
 
+#include "Matrix.h"
 
-class unit {
-
-};
+Matrix unit(const Matrix& vec);
 
 
 #endif //PROYECTOTALLERI_UNIT_H

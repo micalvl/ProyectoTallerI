@@ -105,6 +105,8 @@ public:
     void findInvMatGaussJordan(float** mat, int order);
     Matrix inverse();
     static Matrix zeros(int rows, int cols);
+    static Matrix cross(const Matrix& a, const Matrix& b);
+    static double dot(const Matrix& a, const Matrix& b);
 
 
 private:

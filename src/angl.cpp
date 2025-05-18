@@ -2,7 +2,7 @@
 // Created by micalvl on 03/04/2025.
 //
 
-#include "angl.h"
+#include "../include/angl.h"
 
 double angl(const Matrix& vec1, const Matrix& vec2) {
     const double small     = 1e-8;
