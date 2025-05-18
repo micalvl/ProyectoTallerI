@@ -50,7 +50,7 @@ add_executable(ProyectoTallerI
         src/GHAMatrix.cpp
         src/GHAMatrix.h
         src/gibbs.cpp
-        src/gibbs.h
+        include/gibbs.h
         src/gmst.cpp
         include/gmst.h
         src/hgibbs.cpp

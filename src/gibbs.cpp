@@ -2,7 +2,7 @@
 // Created by micalvl on 03/04/2025.
 //
 
-#include "Gibbs.h"
+#include "../include/gibbs.h"
 #include "Sat_const.h"
 #include "angl.h"
 #include "unit.h"
