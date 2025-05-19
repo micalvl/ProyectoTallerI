@@ -31,6 +31,9 @@
 #include "gibbs.h"
 #include "unit.h"
 #include "hgibbs.h"
+#include "gast.h"
+#include "elements.h"
+#include "IERS.h"
 
 #define TOL_ 10e-14
 
@@ -430,7 +433,7 @@ int hgibbs01() {
     r2(1,1)=std::cos(a1); r2(2,1)=std::sin(a1); r2(3,1)=0;
     r3(1,1)=std::cos(a2); r3(2,1)=std::sin(a2); r3(3,1)=0;
 
-    auto res = hgibbs(r1, r2, r3, 0.0, 1.0, 2.0);
+    HGibbsResult res = hgibbs(r1, r2, r3, 0.0, 1.0, 2.0);
     const double tol_angle = 0.01745329251994; // The same as the function
 
     _assert(res.error == "ok");
@@ -441,6 +444,62 @@ int hgibbs01() {
 
     return 0;
 }
+
+int gast01() {
+    double expected = 1.7588679;
+    double actual   = gast(MJD_J2000);
+    _assert(fabs(actual - expected) < TOL_);
+    return 0;
+}
+
+
+int elements01() {
+    double vals[6] = {1.0, 1.0, 1.0,
+                      1.0, 1.0, 2.0};
+
+    Matrix y(6,1, vals, 6);
+    ElementsResult el = elements(y);
+
+    _assert(fabs(el.p - el.a*(1.0 - el.e*el.e)) < TOL_);
+
+    return 0;
+}
+
+int IERS01() {
+    double Mjd_UTC = 30000.0;
+
+    Matrix eop(13,1);
+    for (int r = 1; r <= 13; ++r) {
+        eop(r,1) = 0.0;
+    }
+    eop(4,1) = Mjd_UTC;
+
+    //  3600 = π/180 rad
+    eop(5,1)  =  3600;
+    eop(6,1)  =  7200;
+    eop(7,1)  =   3.5;
+    eop(8,1)  =   0.1;
+    eop(9,1)  = 10800;
+    eop(10,1) = 14400;
+    eop(11,1) =  1800;
+    eop(12,1) =  2700;
+    eop(13,1) =   37.0;
+
+    IERSResult R = IERS(eop, Mjd_UTC, 'n');
+
+    _assert(fabs(R.x_pole   - (M_PI/180.0))        < TOL_);
+    _assert(fabs(R.y_pole   - (2.0*M_PI/180.0))    < TOL_);
+    _assert(fabs(R.UT1_UTC  - 3.5)                 < TOL_);
+    _assert(fabs(R.LOD      - 0.1)                 < TOL_);
+    _assert(fabs(R.dpsi     - (3.0*M_PI/180.0))    < TOL_);
+    _assert(fabs(R.deps     - (4.0*M_PI/180.0))    < TOL_);
+    _assert(fabs(R.dx_pole  - (0.5*M_PI/180.0))    < TOL_);
+    _assert(fabs(R.dy_pole  - (0.75*M_PI/180.0))   < TOL_);
+    _assert(fabs(R.TAI_UTC  - 37.0)                < TOL_);
+
+    return 0;
+}
+
 
 
 
@@ -465,6 +524,10 @@ int hgibbs01() {
     _verify(angl03);
     _verify(nutangles01);
     _verify(eqnEquinox01);
+    _verify(gast01);
+    _verify(elements01);
+    _verify(IERS01);
+
     //_verify(Mjday_01);
     //_verify(Mjday_02);
     //_verify(R_x_01);

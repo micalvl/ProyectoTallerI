@@ -37,9 +37,9 @@ add_executable(ProyectoTallerI
         src/EccAnom.cpp
         src/EccAnom.h
         src/elements.cpp
-        src/elements.h
+        include/elements.h
         src/EqnEquinox.cpp
-        src/EqnEquinox.h
+        include/EqnEquinox.h
         src/Frac.cpp
         src/G_AccelHarmonic.cpp
         include/G_AccelHarmonic.h
@@ -89,9 +89,9 @@ add_executable(ProyectoTallerI
         src/timediff.cpp
         src/timediff.h
         src/TimeUpdate.cpp
-        src/TimeUpdate.h
+        include/TimeUpdate.h
         src/unit.cpp
-        src/unit.h
+        include/unit.h
         src/VarEqn.cpp
         src/VarEqn.h
         EFK_GEOS3.cpp

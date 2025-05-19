@@ -5,10 +5,12 @@
 #ifndef PROYECTOTALLERI_GAST_H
 #define PROYECTOTALLERI_GAST_H
 
+#include "gmst.h"
+#include "EqnEquinox.h"
+#include <cmath>
+using namespace std;
 
-class gast {
-
-};
+double gast(double Mjd_UT1);
 
 
 #endif //PROYECTOTALLERI_GAST_H

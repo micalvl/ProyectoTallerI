@@ -6,7 +6,7 @@
  *  @date   2025-05-14
  ***********************************************/
 
-#include "TimeUpdate.h"
+#include "../include/TimeUpdate.h"
 
 void TimeUpdate(Matrix& P, Matrix& Phi, double Qdt) {
     Matrix Q = Matrix::identity(P.getFilas()).opsc(Qdt);
