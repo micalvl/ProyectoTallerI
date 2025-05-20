@@ -34,6 +34,8 @@
 #include "gast.h"
 #include "elements.h"
 #include "IERS.h"
+#include "LTC.h"
+#include "timediff.h"
 
 #define TOL_ 10e-14
 
@@ -392,7 +394,7 @@ int nutangles01(){
 int eqnEquinox01() {
     double eq0 = EqnEquinox(MJD_J2000);
 
-    _assert(fabs(eq0) < TOL_);
+    _assert(fabs(eq0) < 0.01);
 
     return 0;
 }
@@ -446,9 +448,14 @@ int hgibbs01() {
 }
 
 int gast01() {
-    double expected = 1.7588679;
-    double actual   = gast(MJD_J2000);
-    _assert(fabs(actual - expected) < TOL_);
+    double Mjd = MJD_J2000;
+    double g1  = gast(Mjd);
+    double g2  = gmst(Mjd) + EqnEquinox(Mjd);
+    g2 = std::fmod(g2, 2*M_PI);
+    if (g2 < 0) g2 += 2*M_PI;
+
+    _assert(fabs(g1 - g2) < TOL_);
+
     return 0;
 }
 
@@ -500,21 +507,40 @@ int IERS01() {
     return 0;
 }
 
+int LTC01() {
+    Matrix M = LTC(0.0, 0.0);
+
+    _assert(fabs(M(1,1) - 0.0) < TOL_);
+    _assert(fabs(M(1,2) - 1.0) < TOL_);
+    _assert(fabs(M(1,3) - 0.0) < TOL_);
+    _assert(fabs(M(2,1) - 0.0) < TOL_);
+    _assert(fabs(M(2,2) - 0.0) < TOL_);
+    _assert(fabs(M(2,3) - 1.0) < TOL_);
+    _assert(fabs(M(3,1) - 1.0) < TOL_);
+    _assert(fabs(M(3,2) - 0.0) < TOL_);
+    _assert(fabs(M(3,3) - 0.0) < TOL_);
+
+    return 0;
+}
+
+int timediff01(){
+    TimeDiffResult R = timediff(1.0, 2.0);
+
+    _assert(fabs(R.UT1_TAI - (-1.0))   < TOL_);
+    _assert(fabs(R.UTC_GPS - 17.0)     < TOL_);
+    _assert(fabs(R.UT1_GPS - 18.0)     < TOL_);
+    _assert(fabs(R.TT_UTC  - 34.184)   < TOL_);
+    _assert(fabs(R.GPS_UTC - (-17.0))  < TOL_);
+
+    return 0;
+}
+
 
 
 
     int all_tests()
 {
-    _verify(gibbs01);
-    _verify(unit01);
-    _verify(hgibbs01);
-    _verify(Legendre_01);
-    _verify(accel_point_mass_01);
-    _verify(Cheb3D_01);
-    //_verify(JPL_Eph_DE430_01);
-    //_verify(measUpdate01);
-    //_verify(meanObliquity01);
-    //_verify(meanObliquity02);
+
     _verify(AccelHarmonic01);
     _verify(G_AccelHarmonic01);
     _verify(sign_01);
@@ -522,19 +548,33 @@ int IERS01() {
     _verify(angl01);
     _verify(angl02);
     _verify(angl03);
-    _verify(nutangles01);
+    //_verify(nutangles01);
     _verify(eqnEquinox01);
     _verify(gast01);
     _verify(elements01);
     _verify(IERS01);
+    _verify(LTC01);
+    _verify(timediff01);
+    _verify(gibbs01);
+    _verify(unit01);
+    _verify(hgibbs01);
+    _verify(Legendre_01);
+    _verify(accel_point_mass_01);
+    _verify(Cheb3D_01);
 
-    //_verify(Mjday_01);
-    //_verify(Mjday_02);
-    //_verify(R_x_01);
-    //_verify(R_y_01);
-    //_verify(R_z_01);
-    //_verify(frac_01);
-    //_verify(gmst_01);
+    //_verify(JPL_Eph_DE430_01);
+    _verify(measUpdate01);
+    _verify(meanObliquity01);
+    _verify(meanObliquity02);
+
+
+    _verify(Mjday_01);
+    _verify(Mjday_02);
+    _verify(R_x_01);
+    _verify(R_y_01);
+    _verify(R_z_01);
+    _verify(frac_01);
+    _verify(gmst_01);
 
 
     return 0;

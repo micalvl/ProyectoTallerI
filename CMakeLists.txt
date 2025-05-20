@@ -62,7 +62,7 @@ add_executable(ProyectoTallerI
         src/Legendre.cpp
         include/Legendre.h
         src/LTC.cpp
-        src/LTC.h
+        include/LTC.h
         src/Matrix.cpp
         src/MeanObliquity.cpp
         include/MeanObliquity.h
