@@ -46,7 +46,7 @@ add_executable(ProyectoTallerI
         src/gast.cpp
         src/gast.h
         src/Geodetic.cpp
-        src/Geodetic.h
+        include/Geodetic.h
         src/GHAMatrix.cpp
         src/GHAMatrix.h
         src/gibbs.cpp
@@ -56,7 +56,7 @@ add_executable(ProyectoTallerI
         src/hgibbs.cpp
         include/hgibbs.h
         src/IERS.cpp
-        src/IERS.h
+        include/IERS.h
         src/JPL_Eph_DE430.cpp
         src/JPL_Eph_DE430.h
         src/Legendre.cpp
@@ -87,7 +87,7 @@ add_executable(ProyectoTallerI
         src/sign_.cpp
         include/sign_.h
         src/timediff.cpp
-        src/timediff.h
+        include/timediff.h
         src/TimeUpdate.cpp
         include/TimeUpdate.h
         src/unit.cpp

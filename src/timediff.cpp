@@ -1,7 +1,7 @@
 //
 // Created by micalvl on 03/04/2025.
 //
-#include "TimeDiff.h"
+#include "../include/TimeDiff.h"
 
 TimeDiffResult timediff(double UT1_UTC, double TAI_UTC) {
     const double TT_TAI  = +32.184;   // TT−TAI difference[s]

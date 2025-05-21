@@ -36,6 +36,7 @@
 #include "IERS.h"
 #include "LTC.h"
 #include "timediff.h"
+#include "Geodetic.h"
 
 #define TOL_ 10e-14
 
@@ -535,6 +536,23 @@ int timediff01(){
     return 0;
 }
 
+int Geodetic01() {
+
+    Matrix r(3,1);
+    r(1,1) = R_Earth + 1000.0;
+    r(2,1) = 0.0;
+    r(3,1) = 0.0;
+
+    double lon, lat, h;
+    Geodetic(r, lon, lat, h);
+
+    _assert(fabs(lon) < TOL_);
+    _assert(fabs(lat) < TOL_);
+    _assert(fabs(h - 1000.0) < TOL_);
+
+    return 0;
+}
+
 
 
 
@@ -575,6 +593,7 @@ int timediff01(){
     _verify(R_z_01);
     _verify(frac_01);
     _verify(gmst_01);
+    _verify(Geodetic01);
 
 
     return 0;

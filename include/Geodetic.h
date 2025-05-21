@@ -6,9 +6,9 @@
 #define PROYECTOTALLERI_GEODETIC_H
 
 
-class Geodetic {
+#include "Matrix.h"
 
-};
+void Geodetic(const Matrix& r, double& lon, double& lat, double& h);
 
 
 #endif //PROYECTOTALLERI_GEODETIC_H

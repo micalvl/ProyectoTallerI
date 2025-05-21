@@ -2,7 +2,7 @@
 // Created by micalvl on 03/04/2025.
 //
 
-#include "IERS.h"
+#include "../include/IERS.h"
 
 IERSResult IERS(const Matrix& eop, double Mjd_UTC, char interp) {
     double mjd = floor(Mjd_UTC);
