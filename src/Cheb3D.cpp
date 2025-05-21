@@ -26,39 +26,44 @@
 %--------------------------------------------------------------------------
 */
 
-Matrix Cheb3D(double t, int N, double Ta, double Tb,const vector<double>& Cx,const vector<double>& Cy,const vector<double>& Cz){
-    //Check validity
-    if( (t<Ta) || (Tb<t) ){
-    cerr << "ERROR: Time out of range in Cheb3D::Value\n" << endl;
+
+Matrix Cheb3D(double t, int N, double Ta, double Tb,
+              const std::vector<double>& Cx,
+              const std::vector<double>& Cy,
+              const std::vector<double>& Cz)
+{
+    if (t < Ta || t > Tb)
+        throw std::invalid_argument("Cheb3D: t fuera de [Ta,Tb]");
+
+    // tau en [-1,1]
+    double tau = 2.0*(t - Ta)/(Tb - Ta) - 1.0;
+
+    // f0, f1, f2 como vectores columna 3×1
+    Matrix f0(3,1), f1(3,1), f2(3,1);
+
+    // Clenshaw hacia atrás: k = N..1
+    for (int k = N; k >= 1; --k) {
+        // Desplazamos
+        f2 = f1;
+        f1 = f0;
+
+        // Construimos coef(k) en 1-based
+        Matrix coef(3,1);
+        coef(1,1) = Cx[k];
+        coef(2,1) = Cy[k];
+        coef(3,1) = Cz[k];
+
+        // f0 = 2·tau·f1 − f2 + coef
+        f0 = f1.opsc(2.0*tau) - f2 + coef;
     }
 
-    double tau = (2*t-Ta-Tb)/(Tb-Ta);
+    // Coeficiente de orden 0
+    Matrix C0(3,1);
+    C0(1,1) = Cx[0];
+    C0(2,1) = Cy[0];
+    C0(3,1) = Cz[0];
 
-    Matrix f1(1, 3), f2(1, 3);
-
-    for (int i = N; i >= 2; --i) {
-        Matrix old_f1 = f1;
-
-        double ci_vals[3] = {
-                Cx[i-1],
-                Cy[i-1],
-                Cz[i-1]
-        };
-        Matrix Ci(1, 3, ci_vals, 3);
-
-        f1 = f1.opsc(2.0*tau) - f2 + Ci;
-        f2 = old_f1;
-    }
-
-    double c0_vals[3] = {
-            Cx[0],
-            Cy[0],
-            Cz[0]
-    };
-    Matrix C0(1, 3, c0_vals, 3);
-
-    Matrix ChebApp = f1.opsc(tau) - f2 + C0;
-
-    return ChebApp;
+    // Evaluación final
+    return f0.opsc(tau) - f1 + C0;
 }
 

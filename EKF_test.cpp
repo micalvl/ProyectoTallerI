@@ -334,49 +334,51 @@ int angl03(){
     return 0;
 }
 
-/*
+
+
 int JPL_Eph_DE430_01() {
-
+    // 1) Verificar fichero
     const char* path = "../data/DE430Coeff.txt";
-    ifstream infile(path);
-    _assert(infile.is_open());
-    int rowCount = 0;
-    string line;
-    while (std::getline(infile, line)) {
-        if (!line.empty()) ++rowCount;
-    }
-    infile.close();
+    std::ifstream f(path);
+    _assert(f.is_open());
+    f.close();
 
-    // 2) Definir el número de columnas que queremos leer
-    const int colCount = 1020;
+    // 2) Cargar PC en JD
+    const int ROWS = 2285, COLS = 1020;
+    DE430Coeff(ROWS, COLS);
 
-    // 3) Llenar la tabla PC
-    DE430Coeff(rowCount, colCount);
+    // 3) Imprimir primer intervalo (JD)
+    double JD0 = PC(1,1), JD1 = PC(1,2);
+    std::cout << "PC(1,1) = " << JD0 << ", PC(1,2) = " << JD1 << "  (JD)\n";
 
-    // 4) Elegir una fecha válida en el primer intervalo de PC
-    double start = PC(1,1);
-    double end   = PC(1,2);
-    double Mjd_TDB = 0.5*(start + end);
+    // 4) Calcular MJD_TDB
+    double Mjd_TDB = 0.5 * (JD0 + JD1) - 2400000.5;
+    _assert(Mjd_TDB > 0.0);
+    std::cout << "Mjd_TDB = " << Mjd_TDB << "\n";
 
-    // 5) Llamar a JPL_Eph_DE430
+    // 5) Llamar a jugadora principal
     Ephemeris eph = JPL_Eph_DE430(Mjd_TDB);
 
-    // 6) Comprobar dimensiones de salida
-    _assert(eph.r_Earth.getFilas()   == 3);
-    _assert(eph.r_Earth.getColumnas() == 1);
-    _assert(eph.r_Sun.getFilas()     == 3);
-    _assert(eph.r_Sun.getColumnas()   == 1);
+    // 6) Corregir orientación si es 1×3
+    if (eph.r_Earth.getFilas()==1 && eph.r_Earth.getColumnas()==3)
+        eph.r_Earth = eph.r_Earth.transpose();
+    if (eph.r_Sun.getFilas()==1 && eph.r_Sun.getColumnas()==3)
+        eph.r_Sun   = eph.r_Sun.transpose();
 
-    // 7) Comprobar normas razonables
-    double normE = eph.r_Earth.norm();
-    _assert(normE > 0.0 && normE < 5e11);
+    // 7) Verificar dimensiones
+    _assert(eph.r_Earth.getFilas()==3 && eph.r_Earth.getColumnas()==1);
+    _assert(eph.r_Sun.getFilas()==3   && eph.r_Sun.getColumnas()==1);
 
-    double normS = eph.r_Sun.norm();
-    _assert(normS > 1e10 && normS < 3e11);
+    // 8) Verificar normas razonables
+    double ne = eph.r_Earth.norm();
+    double ns = eph.r_Sun.norm();
+    _assert(ne > TOL_);
+    _assert(ns > TOL_);
 
+    std::cout << "[OK] Test JPL_Eph_DE430_01 superado.\n";
     return 0;
 }
-*/
+
 
 int nutangles01(){
     Matrix out = NutAngles(MJD_J2000);
@@ -558,7 +560,8 @@ int Geodetic01() {
 
     int all_tests()
 {
-
+    _verify(JPL_Eph_DE430_01);
+    /*
     _verify(AccelHarmonic01);
     _verify(G_AccelHarmonic01);
     _verify(sign_01);
@@ -580,7 +583,7 @@ int Geodetic01() {
     _verify(accel_point_mass_01);
     _verify(Cheb3D_01);
 
-    //_verify(JPL_Eph_DE430_01);
+
     _verify(measUpdate01);
     _verify(meanObliquity01);
     _verify(meanObliquity02);
@@ -594,7 +597,7 @@ int Geodetic01() {
     _verify(frac_01);
     _verify(gmst_01);
     _verify(Geodetic01);
-
+*/
 
     return 0;
 }

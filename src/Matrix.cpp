@@ -288,7 +288,7 @@ Matrix Matrix::opsc(double scalar) const {
     Matrix result(fil, col);
     for (int i = 0; i < fil; ++i) {
         for (int j = 0; j < col; ++j) {
-            result(i + 1, j + 1) = (*this)(i + 1, j + 1) * scalar;
+            result.matrix[i][j] = this->matrix[i][j] * scalar;
         }
     }
     return result;

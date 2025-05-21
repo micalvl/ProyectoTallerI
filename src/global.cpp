@@ -1,11 +1,19 @@
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <algorithm>
+#include <sstream>
 #include "..\include\global.h"
+#include <cctype>
+
+using namespace std;
 
 Param AuxParam;
 Matrix eopdata;
 Matrix Cnm;
 Matrix Snm;
+Matrix PC;
 
 void eop19620101(int c){
     eopdata=Matrix::zeros(13,c);
@@ -46,28 +54,70 @@ void GGM03S(int n){
     fclose(fp);
 }
 
-Matrix PC;
 
-void DE430Coeff(int row, int col) {
-    PC = Matrix::zeros(row, col);
+static bool esValidoEnNumero(char c) {
+    return std::isdigit(c) || c=='+'||c=='-'||c=='.'||c=='E'||c=='e';
+}
 
-    FILE *fp = fopen("../data/DE430Coeff.txt", "r");
-    if (fp == NULL) {
-        printf("Fail open DE430Coeff.txt file\n");
-        exit(EXIT_FAILURE);
+void DE430Coeff(int rows, int cols) {
+    PC = Matrix::zeros(rows, cols);
+    std::ifstream file("../data/DE430Coeff.txt");
+    if (!file.is_open()) {
+        std::cerr << "Error abriendo DE430Coeff.txt\n";
+        std::exit(EXIT_FAILURE);
     }
 
-    double aux;
-    int total_columns = 1020;
-
-    for (int i = 1; i <= row; i++) {
-        for (int j = 1; j <= col; j++) {
-            fscanf(fp, "%lf", &PC(i, j));
+    std::string line;
+    for (int i = 1; i <= rows; ++i) {
+        if (!std::getline(file, line)) {
+            std::cerr << "Línea " << i << " no encontrada\n";
+            std::exit(EXIT_FAILURE);
         }
-        for (int k = col + 1; k <= total_columns; k++) {
-            fscanf(fp, "%lf", &aux);
+        // sustituir comas por puntos
+        std::replace(line.begin(), line.end(), ',', '.');
+
+        // tokenizar por espacios/tabs
+        std::istringstream ss(line);
+        for (int j = 1; j <= cols; ++j) {
+            std::string tok;
+            if (!(ss >> tok)) {
+                std::cerr << "Token vacío en PC("<<i<<","<<j<<")\n";
+                std::exit(EXIT_FAILURE);
+            }
+
+            // filtrar caracteres inválidos
+            std::string f;
+            for (char c : tok) {
+                if (esValidoEnNumero(c)) f.push_back(c);
+            }
+
+            // separar mantisa/exponente
+            auto pE = f.find_first_of("Ee");
+            std::string mant = f, expn;
+            if (pE != std::string::npos) {
+                expn = f.substr(pE);
+                mant = f.substr(0, pE);
+            }
+
+            // si la mantisa tiene >1 '.', borrar todos (eran miles)
+            if (std::count(mant.begin(), mant.end(), '.') > 1)
+                mant.erase(std::remove(mant.begin(), mant.end(), '.'), mant.end());
+
+            std::string clean = mant + expn;
+            double val;
+            try {
+                val = std::stod(clean);
+            } catch (...) {
+                std::cerr << "stod fallo en PC("<<i<<","<<j<<") con '"<<clean<<"'\n";
+                std::exit(EXIT_FAILURE);
+            }
+
+            // —> Escalar solo las dos primeras columnas a JD:
+            if (j == 1 || j == 2) {
+                val /= 1e8;  // 243326450000000 → 2433264.5
+            }
+
+            PC(i, j) = val;
         }
     }
-
-    fclose(fp);
 }
