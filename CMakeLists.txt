@@ -33,7 +33,7 @@ add_executable(ProyectoTallerI
         src/DEInteg.cpp
         src/DEInteg.h
         src/doubler.cpp
-        src/doubler.h
+        include/doubler.h
         src/EccAnom.cpp
         src/EccAnom.h
         src/elements.cpp
@@ -44,11 +44,11 @@ add_executable(ProyectoTallerI
         src/G_AccelHarmonic.cpp
         include/G_AccelHarmonic.h
         src/gast.cpp
-        src/gast.h
+        include/gast.h
         src/Geodetic.cpp
         include/Geodetic.h
         src/GHAMatrix.cpp
-        src/GHAMatrix.h
+        include/GHAMatrix.h
         src/gibbs.cpp
         include/gibbs.h
         src/gmst.cpp
@@ -58,7 +58,7 @@ add_executable(ProyectoTallerI
         src/IERS.cpp
         include/IERS.h
         src/JPL_Eph_DE430.cpp
-        src/JPL_Eph_DE430.h
+        include/JPL_Eph_DE430.h
         src/Legendre.cpp
         include/Legendre.h
         src/LTC.cpp
@@ -76,11 +76,11 @@ add_executable(ProyectoTallerI
         src/NutMatrix.cpp
         src/NutMatrix.h
         src/PoleMatrix.cpp
-        src/PoleMatrix.h
+        include/PoleMatrix.h
         src/Position.cpp
         include/Position.h
         src/PrecMatrix.cpp
-        src/PrecMatrix.h
+        include/PrecMatrix.h
         src/R_x.cpp
         src/R_y.cpp
         src/R_z.cpp

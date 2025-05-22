@@ -5,10 +5,9 @@
 #ifndef PROYECTOTALLERI_NUTMATRIX_H
 #define PROYECTOTALLERI_NUTMATRIX_H
 
+#include "Matrix.h"
 
-class NutMatrix {
-
-};
+Matrix NutMatrix(double Mjd_TT);
 
 
 #endif //PROYECTOTALLERI_NUTMATRIX_H

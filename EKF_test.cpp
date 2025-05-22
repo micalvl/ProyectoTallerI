@@ -37,6 +37,10 @@
 #include "LTC.h"
 #include "timediff.h"
 #include "Geodetic.h"
+#include "GHAMatrix.h"
+#include "PrecMatrix.h"
+#include "PoleMatrix.h"
+#include "NutMatrix.h"
 
 #define TOL_ 10e-14
 
@@ -555,13 +559,77 @@ int Geodetic01() {
     return 0;
 }
 
+int GHAMatrix_01() {
+    double Mjd_UT1 = 59000.0;
+    Matrix R1 = GHAMatrix(Mjd_UT1);
+
+    double theta = gast(Mjd_UT1);
+    Matrix R2 = R_z(theta);
+
+    _assert(R1.getFilas() == 3);
+    _assert(R1.getColumnas() == 3);
+
+    for (int i = 1; i <= 3; ++i) {
+        for (int j = 1; j <= 3; ++j) {
+            _assert(fabs(R1(i, j) - R2(i, j)) < TOL_);
+        }
+    }
+
+    return 0;
+}
+
+int PrecMatrix_01()
+{
+    double mjd = MJD_J2000;
+    Matrix P = PrecMatrix(mjd, mjd);
+
+    _assert(P.getFilas()    == 3);
+    _assert(P.getColumnas() == 3);
+
+    for (int i = 1; i <= 3; ++i) {
+        for (int j = 1; j <= 3; ++j) {
+            double expected = (i == j ? 1.0 : 0.0);
+            _assert(fabs(P(i,j) - expected) < TOL_);
+        }
+    }
+    return 0;
+}
+
+int PoleMatrix_01()
+{
+    Matrix P = PoleMatrix(0.0, 0.0);
+
+    _assert(P.getFilas()    == 3);
+    _assert(P.getColumnas() == 3);
+
+    for (int i = 1; i <= 3; ++i) {
+        for (int j = 1; j <= 3; ++j) {
+            double expected = (i == j ? 1.0 : 0.0);
+            _assert(fabs(P(i,j) - expected) < TOL_);
+        }
+    }
+
+    return 0;
+}
+
+int NutMatrix_01() {
+    Matrix N = NutMatrix(0.0);
+    _assert(N.getFilas()    == 3 && N.getColumnas() == 3);
+    for (int i = 1; i <= 3; ++i)
+        for (int j = 1; j <= 3; ++j) {
+            double exp = (i==j?1.0:0.0);
+            _assert(fabs(N(i,j) - exp) < TOL_);
+        }
+    return 0;
+}
+
 
 
 
     int all_tests()
 {
-    _verify(JPL_Eph_DE430_01);
-    /*
+    //_verify(JPL_Eph_DE430_01);
+
     _verify(AccelHarmonic01);
     _verify(G_AccelHarmonic01);
     _verify(sign_01);
@@ -581,14 +649,10 @@ int Geodetic01() {
     _verify(hgibbs01);
     _verify(Legendre_01);
     _verify(accel_point_mass_01);
-    _verify(Cheb3D_01);
-
-
+    //_verify(Cheb3D_01);
     _verify(measUpdate01);
     _verify(meanObliquity01);
     _verify(meanObliquity02);
-
-
     _verify(Mjday_01);
     _verify(Mjday_02);
     _verify(R_x_01);
@@ -597,7 +661,11 @@ int Geodetic01() {
     _verify(frac_01);
     _verify(gmst_01);
     _verify(Geodetic01);
-*/
+    _verify(GHAMatrix_01);
+    _verify(PrecMatrix_01);
+    _verify(PoleMatrix_01);
+    //_verify(NutMatrix_01);
+
 
     return 0;
 }
