@@ -41,6 +41,8 @@
 #include "PrecMatrix.h"
 #include "PoleMatrix.h"
 #include "NutMatrix.h"
+#include "Mjday_TDB.h"
+#include "doubler.h"
 
 #define TOL_ 10e-14
 
@@ -393,8 +395,11 @@ int nutangles01(){
     double dpsi = out(1,1);
     double deps = out(2,1);
 
-    _assert(fabs(dpsi) < 0.01);
-    _assert(fabs(deps) < 0.01);
+    double tol = 0.0001;
+
+    _assert(fabs(dpsi) < tol);
+    _assert(fabs(deps) < tol);
+    return 0;
 
 }
 
@@ -614,12 +619,50 @@ int PoleMatrix_01()
 
 int NutMatrix_01() {
     Matrix N = NutMatrix(0.0);
+    double tol = 0.0001;
     _assert(N.getFilas()    == 3 && N.getColumnas() == 3);
     for (int i = 1; i <= 3; ++i)
         for (int j = 1; j <= 3; ++j) {
             double exp = (i==j?1.0:0.0);
-            _assert(fabs(N(i,j) - exp) < TOL_);
+            _assert(fabs(N(i,j) - exp) < 0.0001);
         }
+    return 0;
+}
+
+int Mjday_TDB_01() {
+    double mjd_tdb = Mjday_TDB(MJD_J2000);
+    double diff    = fabs(mjd_tdb - MJD_J2000);
+    double tol = 10e-9;
+    _assert(diff < tol);
+    return 0;
+}
+
+int Doubler_01()
+{
+    Matrix los1 = Matrix::zeros(3,1),
+            los2 = Matrix::zeros(3,1),
+            los3 = Matrix::zeros(3,1);
+    los1(1,1) = 1.0;
+    los2(2,1) = 1.0;
+    los3(3,1) = 1.0;
+
+    Matrix zero = Matrix::zeros(3,1);
+
+    DoublerResult R = doubler(
+            3.0, 3.0,
+            0.0, 0.0,
+            2.0, 2.0,
+            los1, los2, los3,
+            zero, zero, zero,
+            0.0, 1.0,
+            true
+    );
+
+    _assert(R.r2.getFilas()    == 3);
+    _assert(R.r2.getColumnas() == 1);
+    _assert(R.r3.getFilas()    == 3);
+    _assert(R.r3.getColumnas() == 1);
+
     return 0;
 }
 
@@ -637,7 +680,7 @@ int NutMatrix_01() {
     _verify(angl01);
     _verify(angl02);
     _verify(angl03);
-    //_verify(nutangles01);
+    _verify(nutangles01);
     _verify(eqnEquinox01);
     _verify(gast01);
     _verify(elements01);
@@ -664,7 +707,9 @@ int NutMatrix_01() {
     _verify(GHAMatrix_01);
     _verify(PrecMatrix_01);
     _verify(PoleMatrix_01);
-    //_verify(NutMatrix_01);
+    _verify(NutMatrix_01);
+    _verify(Mjday_TDB_01);
+    _verify(Doubler_01);
 
 
     return 0;

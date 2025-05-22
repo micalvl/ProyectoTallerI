@@ -2,7 +2,7 @@
 // Created by micalvl on 03/04/2025.
 //
 
-#include "NutMatrix.h"
+#include "../include/NutMatrix.h"
 #include "MeanObliquity.h"
 #include "NutAngles.h"
 #include "R_x.h"

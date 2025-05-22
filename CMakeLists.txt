@@ -72,9 +72,9 @@ add_executable(ProyectoTallerI
         src/Mjday_TDB.cpp
         include/Mjday_TDB.h
         src/NutAngles.cpp
-        src/NutAngles.h
+        include/NutAngles.h
         src/NutMatrix.cpp
-        src/NutMatrix.h
+        include/NutMatrix.h
         src/PoleMatrix.cpp
         include/PoleMatrix.h
         src/Position.cpp
