@@ -11,8 +11,6 @@
 
 
 
-// fi [rad]
-
 void Legendre(int n, int m, double fi, Matrix &pnm, Matrix &dpnm) {
     pnm = Matrix(n + 1, m + 1);
     dpnm = Matrix(n + 1, m + 1);
@@ -26,58 +24,27 @@ void Legendre(int n, int m, double fi, Matrix &pnm, Matrix &dpnm) {
         dpnm(2,2) = -sq3 * sin(fi);
     }
 
-
-    //diagonal coefficients
-    for (int i = 2; i < n; i++) {
-        pnm(i + 1, i + 1) = sqrt((2 * i + 1) / (2 * i)) * cos(fi) * pnm(i, i);
-    }
-
     for (int i = 2; i <= n; i++) {
-        dpnm(i + 1, i + 1) = sqrt((2 * i + 1) / (2 * i)) * ((cos(fi) * dpnm(i, i)) - (sin(fi) * pnm(i, i)));
-    }
-
-
-
-    // horizontal first step coefficients
-    for (int i = 1; i <= n; i++) {
-        pnm(i + 1, i) = sqrt(2 * i + 1) * sin(fi) * pnm(i, i);
+        pnm(i + 1, i + 1) = sqrt((2.0 * i + 1.0) / (2.0 * i)) * cos(fi) * pnm(i, i);
+        dpnm(i + 1, i + 1) = sqrt((2.0 * i + 1.0) / (2.0 * i)) * (cos(fi) * dpnm(i, i) - sin(fi) * pnm(i, i));
     }
 
     for (int i = 1; i <= n; i++) {
-        dpnm(i + 1, i) = sqrt(2 * i + 1) * ((cos(fi) * pnm(i, i)) + (sin(fi) * dpnm(i, i)));
+        pnm(i + 1, i) = sqrt(2.0 * i + 1.0) * sin(fi) * pnm(i, i);
+        dpnm(i + 1, i) = sqrt(2.0 * i + 1.0) * (cos(fi) * pnm(i, i) + sin(fi) * dpnm(i, i));
     }
 
-    // horizontal second step coefficients
-    int j = 0;
-    int k = 2;
+    for (int j = 0; j <= m; j++) {
+        for (int i = j + 2; i <= n; i++) {
+            double denom = (i - j) * (i + j);
+            if (denom == 0.0) continue;
 
-    while (1) {
-        for (int i = k; i <= n; i++) {
-            pnm(i + 1, j + 1) = sqrt((2 * i + 1) / ((i - j) * (i + j))) * ((sqrt(2 * i - 1) * sin(fi) * pnm(i, j + 1)) -
-                                                                           (sqrt(((i + j - 1) * (i - j - 1)) /
-                                                                                 (2 * i - 3)) * pnm(i - 1, j + 1)));
-        }
-        j = j + 1;
-        k = k + 1;
+            double a = sqrt((2.0 * i + 1.0) / denom);
+            double b = sqrt(2.0 * i - 1.0);
+            double c = sqrt(((i + j - 1.0) * (i - j - 1.0)) / (2.0 * i - 3.0));
 
-        if (j > m) {
-            break;
-        }
-    }
-    j = 0;
-    k = 2;
-    while (1) {
-        for (int i = k; i <= n; i++) {
-            dpnm(i + 1, j + 1) = sqrt((2 * i + 1) / ((i - j) * (i + j))) *
-                                 ((sqrt(2 * i - 1) * sin(fi) * dpnm(i, j + 1)) +
-                                  (sqrt(2 * i - 1) * cos(fi) * pnm(i, j + 1)) -
-                                  (sqrt(((i + j - 1) * (i - j - 1)) / (2 * i - 3)) * dpnm(i - 1, j + 1)));
-        }
-
-        j = j + 1;
-        k = k + 1;
-        if (j > m) {
-            break;
+            pnm(i + 1, j + 1) = a * (b * sin(fi) * pnm(i, j + 1) - c * pnm(i - 1, j + 1));
+            dpnm(i + 1, j + 1) = a * (b * (sin(fi) * dpnm(i, j + 1) + cos(fi) * pnm(i, j + 1)) - c * dpnm(i - 1, j + 1));
         }
     }
 }

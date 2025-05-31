@@ -42,12 +42,26 @@ static std::vector<double> getCoeffs(const std::vector<double>& pc,
                                      int step,
                                      int blockLen)
 {
-    int maxIdx = (startIndex - 1)
-                 + (blockCount - 1) * step
-                 + (blockLen - 1);
+    int maxIdx = (startIndex - 1) + (blockCount - 1) * step + (blockLen - 1);
     if (maxIdx >= (int)pc.size()) {
+        std::cerr << "Error en getCoeffs: intento de acceso fuera de rango.\n";
+        std::cerr << "startIndex=" << startIndex << ", blockCount=" << blockCount
+                  << ", step=" << step << ", blockLen=" << blockLen << "\n";
+        std::cerr << "maxIdx=" << maxIdx << ", pc.size()=" << pc.size() << "\n";
+        throw std::runtime_error("getCoeffs: acceso fuera de rango");
+    }
 
-        std::exit(EXIT_FAILURE);
+    // Comprobación adicional: verificar si hay datos no nulos en el rango a extraer
+    bool hayDatos = false;
+    for (int i = (startIndex-1); i <= maxIdx; ++i) {
+        if (pc[i] != 0.0) {
+            hayDatos = true;
+            break;
+        }
+    }
+    if (!hayDatos) {
+        std::cerr << "Advertencia: getCoeffs encontró solo ceros en el rango ("
+                  << startIndex << " - " << maxIdx+1 << ")\n";
     }
 
     std::vector<double> out;

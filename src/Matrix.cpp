@@ -294,6 +294,16 @@ Matrix Matrix::opsc(double scalar) const {
     return result;
 }
 
+Matrix Matrix::divsc(double scalar) const {
+    Matrix result(fil, col);
+    for (int i = 0; i < fil; ++i) {
+        for (int j = 0; j < col; ++j) {
+            result.matrix[i][j] = this->matrix[i][j] / scalar;
+        }
+    }
+    return result;
+}
+
 Matrix Matrix::zeros(int rows, int cols) {
     return Matrix(rows, cols);
 }

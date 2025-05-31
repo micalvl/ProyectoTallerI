@@ -100,6 +100,8 @@ public:
     static Matrix identity(int size);
 
     Matrix opsc(double scalar) const;
+    Matrix divsc(double scalar) const;
+
     void printMatrixValues(float** arr, int n, int m);
     void printInverseMatrix(float** arr, int n, int m);
     void findInvMatGaussJordan(float** mat, int order);
@@ -107,6 +109,7 @@ public:
     static Matrix zeros(int rows, int cols);
     static Matrix cross(const Matrix& a, const Matrix& b);
     static double dot(const Matrix& a, const Matrix& b);
+
 
 
 private:

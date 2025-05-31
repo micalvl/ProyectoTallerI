@@ -26,8 +26,8 @@ add_executable(ProyectoTallerI
         src/anglesdr.h
         src/anglesg.cpp
         src/anglesg.h
-        src/AzEIPa.cpp
-        src/AzEIPa.h
+        src/AzElPa.cpp
+        include/AzElPa.h
         src/Cheb3D.cpp
         include/Cheb3D.h
         src/DEInteg.cpp
@@ -97,4 +97,5 @@ add_executable(ProyectoTallerI
         EFK_GEOS3.cpp
         EKF_test.cpp
         include/global.h
-        src/global.cpp)
+        src/global.cpp
+        )

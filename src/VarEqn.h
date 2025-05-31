@@ -6,9 +6,10 @@
 #define PROYECTOTALLERI_VAREQN_H
 
 
-class VarEqn {
+#include "Matrix.h"
+#include "global.h"
 
-};
+Matrix VarEqn(double x, const Matrix& yPhi);
 
 
 #endif //PROYECTOTALLERI_VAREQN_H
