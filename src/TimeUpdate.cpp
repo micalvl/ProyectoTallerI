@@ -8,7 +8,7 @@
 
 #include "../include/TimeUpdate.h"
 
-void TimeUpdate(Matrix& P, Matrix& Phi, double Qdt) {
+void TimeUpdate(Matrix& P, const Matrix& Phi, double Qdt) {
     Matrix Q = Matrix::identity(P.getFilas()).opsc(Qdt);
     P = Phi.operator*(P)  * Phi.transpose() + Q;
 }

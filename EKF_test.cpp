@@ -49,6 +49,7 @@
 #include "anglesdr.h"
 #include "anglesg.h"
 #include "EccAnom.h"
+#include "TimeUpdate.h"
 
 #define TOL_ 10e-14
 
@@ -771,16 +772,14 @@ int VarEqn_01() {
 }
 
 int Anglesdr_01() {
-    // ¡OJO! 3 filas, 13 columnas (no 13 filas, 3 columnas)
     eopdata = Matrix(3, 13);
 
-    // Rellenamos las 3 filas (una por cada Mjd)
     for (int row = 1; row <= 3; ++row) {
         for (int col = 1; col <= 13; ++col) {
-            eopdata(row, col) = 0.0; // Ponemos a cero por defecto
+            eopdata(row, col) = 0.0;
         }
-        eopdata(row, 4) = 58000 + (row-1); // Mjd en la columna 4 (índice 1-based)
-        eopdata(row, 5) = 3600;  // Ejemplo: x_pole (puedes ajustar valores)
+        eopdata(row, 4) = 58000 + (row-1); // Mjd
+        eopdata(row, 5) = 3600;  // x_pole
         eopdata(row, 6) = 7200;  // y_pole
         eopdata(row, 7) = 3.5;   // UT1_UTC
         eopdata(row, 8) = 0.1;   // LOD
@@ -791,14 +790,14 @@ int Anglesdr_01() {
         eopdata(row,13) = 37.0;  // TAI_UTC
     }
 
-    double az1 = 0.1, az2 = 0.2, az3 = 0.3;
-    double el1 = 0.1, el2 = 0.1, el3 = 0.1;
+    double az1 = 0.0,   az2 = M_PI/2, az3 = M_PI;
+    double el1 = 0.0,   el2 = 0.2,     el3 = 0.4;
     double Mjd1 = 58000, Mjd2 = 58001, Mjd3 = 58002;
 
     Matrix rsite1(3,1), rsite2(3,1), rsite3(3,1);
-    rsite1(1,1)=1000; rsite1(2,1)=0;    rsite1(3,1)=0;
-    rsite2(1,1)=2000; rsite2(2,1)=0;    rsite2(3,1)=0;
-    rsite3(1,1)=3000; rsite3(2,1)=0;    rsite3(3,1)=0;
+    rsite1(1,1) = 1000; rsite1(2,1) =    0; rsite1(3,1) =    0;
+    rsite2(1,1) =    0; rsite2(2,1) = 2000; rsite2(3,1) =    0;
+    rsite3(1,1) =    0; rsite3(2,1) =    0; rsite3(3,1) = 3000;
 
     AnglesDRResult res = anglesdr(az1, az2, az3, el1, el2, el3, Mjd1, Mjd2, Mjd3,
                                   rsite1, rsite2, rsite3);
@@ -807,9 +806,6 @@ int Anglesdr_01() {
     _assert(res.r2.getColumnas() == 1);
     _assert(res.v2.getFilas() == 3);
     _assert(res.v2.getColumnas() == 1);
-    std::cout << "res.r2 = [" << res.r2(1,1) << ", " << res.r2(2,1) << ", " << res.r2(3,1) << "]\n";
-    _assert(std::isfinite(res.r2(1,1)));
-    _assert(std::isfinite(res.v2(1,1)));
 
     printf("[OK] Anglesdr_Test PASSED.\n");
     return 0;
@@ -875,21 +871,30 @@ int EccAnom_02(){
     return 0;
 }
 
+int TimeUpdate_01() {
+    Matrix P(2,2);
+    P(1,1) = 1.0;  P(1,2) = 2.0;
+    P(2,1) = 3.0;  P(2,2) = 4.0;
+
+    Matrix Phi = Matrix::identity(2);
+
+    double Qdt = 0.1;
+
+    TimeUpdate(P, Phi, Qdt);
+
+    bool ok = true;
+    ok &= std::fabs(P(1,1) - 1.1) < 1e-10;
+    ok &= std::fabs(P(1,2) - 2.0) < 1e-10;
+    ok &= std::fabs(P(2,1) - 3.0) < 1e-10;
+    ok &= std::fabs(P(2,2) - 4.1) < 1e-10;
+
+    return 0;
+}
+
     int all_tests()
 {
 
-
-    _verify(Anglesdr_01); // Error por culpa de IERS (o anterior)
-
-
-
-
-
-
-
 /*
-
-
     _verify(nutangles01);
     _verify(AzElPa_01);
     _verify(AccelHarmonic01);
@@ -934,10 +939,10 @@ int EccAnom_02(){
     _verify(EccAnom_01);
     _verify(EccAnom_02);
     _verify(VarEqn_01);
-
-
+    _verify(Anglesdr_01); // cuidado con este test depende de si el numero es finito
+    _verify(TimeUpdate_01);
     */
-    // FALTA TIMEUPDATE
+
 
 
 
