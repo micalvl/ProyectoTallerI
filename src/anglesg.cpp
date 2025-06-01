@@ -38,12 +38,16 @@ AnglesGResult anglesg(
     Geodetic(Rs1, lon1, lat1, h1);
     Geodetic(Rs2, lon2, lat2, h2);
     Geodetic(Rs3, lon3, lat3, h3);
+
     Matrix M1 = LTC(lon1, lat1);
     Matrix M2 = LTC(lon2, lat2);
     Matrix M3 = LTC(lon3, lat3);
-    Matrix Lb1 = M1.transpose() * L1;
-    Matrix Lb2 = M2.transpose() * L2;
-    Matrix Lb3 = M3.transpose() * L3;
+
+    Matrix Lb1 = M1.transpose().operator*(L1);
+
+    Matrix Lb2 = M2.transpose().operator*(L2);
+
+    Matrix Lb3 = M3.transpose().operator*(L3);
 
     auto transform = [](double Mjd_UTC, Matrix& L, Matrix& Rs) {
         IERSResult ier = IERS(eopdata, Mjd_UTC, 'l');
@@ -58,7 +62,10 @@ AnglesGResult anglesg(
         Rs = E.transpose() * Rs;
     };
 
-    Matrix Rs1_t = Rs1, Rs2_t = Rs2, Rs3_t = Rs3;
+    Matrix Rs1_t = Rs1;
+    Matrix Rs2_t = Rs2;
+    Matrix Rs3_t = Rs3;
+
     transform(Mjd1, Lb1, Rs1_t);
     transform(Mjd2, Lb2, Rs2_t);
     transform(Mjd3, Lb3, Rs3_t);
@@ -70,7 +77,6 @@ AnglesGResult anglesg(
     double b1 = tau3 / (6*(tau3 - tau1)) * ((tau3 - tau1)*(tau3 - tau1) - tau3*tau3);
     double b3 = -tau1 / (6*(tau3 - tau1)) * ((tau3 - tau1)*(tau3 - tau1) - tau1*tau1);
 
-    std::cout << " Matriz L:" << std::endl;
     Matrix L(3,3), R(3,3);
     for (int i = 1; i <= 3; ++i) {
         L(i,1) = Lb1(i,1);
@@ -82,16 +88,12 @@ AnglesGResult anglesg(
         R(i,2) = Rs2_t(i,1);
         R(i,3) = Rs3_t(i,1);
     }
-    std::cout << "[DEBUG] Matriz L:" << std::endl;
     L.print();
-    std::cout << "[DEBUG] Matriz R:" << std::endl;
     R.print();
 
-    std::cout << "[DEBUG] Calculando L.inverse()" << std::endl;
     Matrix Linv = L.inverse();
     Linv.print();
 
-    std::cout << "[DEBUG] Multiplicando Linv * R" << std::endl;
     Matrix D = Linv * R;
     D.print();
     double Ccye = 2.0 * (Lb2.transpose() * Rs2_t)(1,1);

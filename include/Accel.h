@@ -13,7 +13,7 @@
 #include "global.h"
 #include "Matrix.h"
 #include "IERS.h"
-#include "Timediff.h"
+#include "timediff.h"
 #include "PrecMatrix.h"
 #include "NutMatrix.h"
 #include "PoleMatrix.h"

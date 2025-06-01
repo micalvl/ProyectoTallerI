@@ -36,9 +36,12 @@ Matrix::Matrix(int fil, int col, double v[], int n): fil(fil), col(col)
 
 Matrix::Matrix() : fil(0), col(0), matrix(nullptr) {}
 
-Matrix::Matrix(const Matrix& m)
+Matrix::Matrix(const Matrix& m): fil(m.fil), col(m.col)
 {
-    *this = m;
+    initMatrix();
+    for (int i = 0; i < fil; ++i)
+        for (int j = 0; j < col; ++j)
+            matrix[i][j] = m.matrix[i][j];
 }
 
 
@@ -104,7 +107,7 @@ Matrix Matrix::operator-(const Matrix& matrix2) const
 
 Matrix Matrix::operator*(const Matrix& matrix2) const
 {
-    Matrix result(fil, col);
+    Matrix result(fil, matrix2.col); // Esto debe ser así por si las matrices no tienen la misma dimension
 
     for (int i = 0; i < this->fil ; i++){
         for (int j = 0; j < matrix2.col; j++){

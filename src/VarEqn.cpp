@@ -40,6 +40,8 @@ Matrix VarEqn(double x, const Matrix& yPhi) {
         for (int i=1; i<=6; ++i)
             Phi(i,j) = yPhi(6*(j-1)+i,1);
 
+
+
     Matrix a = AccelHarmonic(r, E, AuxParam.n, AuxParam.m);
     Matrix G = G_AccelHarmonic(r, E, AuxParam.n, AuxParam.m);
 

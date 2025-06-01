@@ -349,39 +349,39 @@ int angl03(){
 
 
 int JPL_Eph_DE430_01() {
-    // 1) Verificar fichero
+
     const char* path = "../data/DE430Coeff.txt";
     std::ifstream f(path);
     _assert(f.is_open());
     f.close();
 
-    // 2) Cargar PC en JD
+
     const int ROWS = 2285, COLS = 1020;
     DE430Coeff(ROWS, COLS);
 
-    // 3) Imprimir primer intervalo (JD)
+
     double JD0 = PC(1,1), JD1 = PC(1,2);
     std::cout << "PC(1,1) = " << JD0 << ", PC(1,2) = " << JD1 << "  (JD)\n";
 
-    // 4) Calcular MJD_TDB
+
     double Mjd_TDB = 0.5 * (JD0 + JD1) - 2400000.5;
     _assert(Mjd_TDB > 0.0);
     std::cout << "Mjd_TDB = " << Mjd_TDB << "\n";
 
-    // 5) Llamar a jugadora principal
+
     Ephemeris eph = JPL_Eph_DE430(Mjd_TDB);
 
-    // 6) Corregir orientación si es 1×3
+
     if (eph.r_Earth.getFilas()==1 && eph.r_Earth.getColumnas()==3)
         eph.r_Earth = eph.r_Earth.transpose();
     if (eph.r_Sun.getFilas()==1 && eph.r_Sun.getColumnas()==3)
         eph.r_Sun   = eph.r_Sun.transpose();
 
-    // 7) Verificar dimensiones
+
     _assert(eph.r_Earth.getFilas()==3 && eph.r_Earth.getColumnas()==1);
     _assert(eph.r_Sun.getFilas()==3   && eph.r_Sun.getColumnas()==1);
 
-    // 8) Verificar normas razonables
+
     double ne = eph.r_Earth.norm();
     double ns = eph.r_Sun.norm();
     _assert(ne > TOL_);
@@ -454,7 +454,7 @@ int hgibbs01() {
     r3(1,1)=std::cos(a2); r3(2,1)=std::sin(a2); r3(3,1)=0;
 
     HGibbsResult res = hgibbs(r1, r2, r3, 0.0, 1.0, 2.0);
-    const double tol_angle = 0.01745329251994; // The same as the function
+    const double tol_angle = 0.01745329251994;
 
     _assert(res.error == "ok");
     _assert(res.theta  > 0.0 && res.theta  < tol_angle);
@@ -493,22 +493,22 @@ int elements01() {
 int IERS01() {
     double Mjd_UTC = 30000.0;
 
-    Matrix eop(13,1);
+    Matrix eop(1,13);
     for (int r = 1; r <= 13; ++r) {
-        eop(r,1) = 0.0;
+        eop(1,r) = 0.0;
     }
-    eop(4,1) = Mjd_UTC;
+    eop(1,4) = Mjd_UTC;
 
     //  3600 = π/180 rad
-    eop(5,1)  =  3600;
-    eop(6,1)  =  7200;
-    eop(7,1)  =   3.5;
-    eop(8,1)  =   0.1;
-    eop(9,1)  = 10800;
-    eop(10,1) = 14400;
-    eop(11,1) =  1800;
-    eop(12,1) =  2700;
-    eop(13,1) =   37.0;
+    eop(1,5)  =  3600;
+    eop(1,6)  =  7200;
+    eop(1,7)  =   3.5;
+    eop(1,8)  =   0.1;
+    eop(1,9)  = 10800;
+    eop(1,10) = 14400;
+    eop(1,11) =  1800;
+    eop(1,12) =  2700;
+    eop(1,13) =   37.0;
 
     IERSResult R = IERS(eop, Mjd_UTC, 'n');
 
@@ -672,18 +672,15 @@ int Doubler_01()
     return 0;
 }
 
-int Accel_RealDataTest() {
+int Accel_01() {
     eop19620101(21413, 13);
 
-    int nmax = 180; // o el grado real de tu fichero GGM03S
+    int nmax = 180;
     GGM03S(nmax+1);
 
     DE430Coeff(2285, 1020);
 
-    std::cout << "[OK] eopdata: " << eopdata.getFilas() << " filas, " << eopdata.getColumnas() << " columnas" << std::endl;
-    std::cout << "[OK] PC: " << PC.getFilas() << " filas, " << PC.getColumnas() << " columnas" << std::endl;
-
-    double Mjd_test = 37665.0;  // Fecha inicial (1 enero 1962)
+    double Mjd_test = 37665.0;
     AuxParam.Mjd_UTC = Mjd_test;
     AuxParam.Mjd_TT = Mjd_test;
     AuxParam.n = nmax;
@@ -692,7 +689,6 @@ int Accel_RealDataTest() {
     AuxParam.moon = 1;
     AuxParam.planets = 1;
 
-    std::cout << "Usando Mjd_test=" << Mjd_test << std::endl;
 
     Matrix Y(6, 1);
     Y(1, 1) = 7000e3;
@@ -710,7 +706,7 @@ int Accel_RealDataTest() {
             std::cout << "dY(" << i << ",1) = " << dY(i, 1) << std::endl;
         }
 
-        std::cout << "[OK] Accel_Test_RangoReal superado." << std::endl;
+        std::cout << "Accel superado." << std::endl;
     } catch (const std::exception &e) {
         std::cerr << "Error en Accel: " << e.what() << std::endl;
         return 1;
@@ -746,7 +742,7 @@ int AzElPa_01() {
 }
 
 int VarEqn_01() {
-    int nPhi = 6, size = nPhi + nPhi * nPhi; // 6 + 36 = 42
+    int nPhi = 6, size = nPhi + nPhi * nPhi;
     Matrix yPhi(size, 1);
     for (int i = 1; i <= size; ++i) {
         yPhi(i, 1) = (double)i;
@@ -760,8 +756,11 @@ int VarEqn_01() {
     AuxParam.moon = 1;
     AuxParam.planets = 1;
 
-    eop19620101(21413,31);
+    eop19620101(21413,13);
     DE430Coeff(2285, 1020);
+
+    Cnm = Matrix(AuxParam.n+1, AuxParam.m+1);
+    Snm = Matrix(AuxParam.n+1, AuxParam.m+1);
 
     Matrix yPhip = VarEqn(0.0, yPhi);
 
@@ -772,25 +771,35 @@ int VarEqn_01() {
 }
 
 int Anglesdr_01() {
-    eopdata = Matrix::zeros(13,3);
-    for (int j = 1; j <= 3; ++j) {
-        eopdata(4,j) = 58000 + (j-1);  // Mjd1, Mjd2, Mjd3
-        for (int i = 1; i <= 13; ++i) {
-            eopdata(i,j) = 0.0;
+    // ¡OJO! 3 filas, 13 columnas (no 13 filas, 3 columnas)
+    eopdata = Matrix(3, 13);
+
+    // Rellenamos las 3 filas (una por cada Mjd)
+    for (int row = 1; row <= 3; ++row) {
+        for (int col = 1; col <= 13; ++col) {
+            eopdata(row, col) = 0.0; // Ponemos a cero por defecto
         }
+        eopdata(row, 4) = 58000 + (row-1); // Mjd en la columna 4 (índice 1-based)
+        eopdata(row, 5) = 3600;  // Ejemplo: x_pole (puedes ajustar valores)
+        eopdata(row, 6) = 7200;  // y_pole
+        eopdata(row, 7) = 3.5;   // UT1_UTC
+        eopdata(row, 8) = 0.1;   // LOD
+        eopdata(row, 9) = 10800; // dpsi
+        eopdata(row,10) = 14400; // deps
+        eopdata(row,11) = 1800;  // dx_pole
+        eopdata(row,12) = 2700;  // dy_pole
+        eopdata(row,13) = 37.0;  // TAI_UTC
     }
 
-    // Parámetros ficticios y sencillos
     double az1 = 0.1, az2 = 0.2, az3 = 0.3;
     double el1 = 0.1, el2 = 0.1, el3 = 0.1;
     double Mjd1 = 58000, Mjd2 = 58001, Mjd3 = 58002;
 
     Matrix rsite1(3,1), rsite2(3,1), rsite3(3,1);
-    rsite1(1,1)=1000; rsite1(2,1)=0; rsite1(3,1)=0;
-    rsite2(1,1)=2000; rsite2(2,1)=0; rsite2(3,1)=0;
-    rsite3(1,1)=3000; rsite3(2,1)=0; rsite3(3,1)=0;
+    rsite1(1,1)=1000; rsite1(2,1)=0;    rsite1(3,1)=0;
+    rsite2(1,1)=2000; rsite2(2,1)=0;    rsite2(3,1)=0;
+    rsite3(1,1)=3000; rsite3(2,1)=0;    rsite3(3,1)=0;
 
-    // Llamada a anglesdr
     AnglesDRResult res = anglesdr(az1, az2, az3, el1, el2, el3, Mjd1, Mjd2, Mjd3,
                                   rsite1, rsite2, rsite3);
 
@@ -798,6 +807,7 @@ int Anglesdr_01() {
     _assert(res.r2.getColumnas() == 1);
     _assert(res.v2.getFilas() == 3);
     _assert(res.v2.getColumnas() == 1);
+    std::cout << "res.r2 = [" << res.r2(1,1) << ", " << res.r2(2,1) << ", " << res.r2(3,1) << "]\n";
     _assert(std::isfinite(res.r2(1,1)));
     _assert(std::isfinite(res.v2(1,1)));
 
@@ -807,16 +817,14 @@ int Anglesdr_01() {
 
 int test_anglesg() {
     eop19620101(21413, 13);
-    // Ángulos en radianes
     double az1 = 0.5, az2 = 0.6, az3 = 0.7;
     double el1 = 0.4, el2 = 0.5, el3 = 0.6;
 
-    // Fechas (MJD)
     double Mjd1 = 51544.0;
-    double Mjd2 = Mjd1 + (10.0 / 1440.0);   // 10 minutos después
-    double Mjd3 = Mjd1 + (20.0 / 1440.0);   // 20 minutos después
+    double Mjd2 = Mjd1 + (10.0 / 1440.0);
+    double Mjd3 = Mjd1 + (20.0 / 1440.0);
 
-    // Vectores posición (ejemplo: sobre el ecuador y en Z)
+
     Matrix Rs1(3,1), Rs2(3,1), Rs3(3,1);
     Rs1(1,1) = 6371e3; Rs1(2,1) = 0;      Rs1(3,1) = 0;
     Rs2(1,1) = 0;      Rs2(2,1) = 6371e3; Rs2(3,1) = 0;
@@ -828,13 +836,13 @@ int test_anglesg() {
                 Mjd1, Mjd2, Mjd3, Rs1, Rs2, Rs3
         );
 
-        // Comprueba tamaños
+
         if (res.r2.getFilas() != 3 || res.r2.getColumnas() != 1)
             throw std::runtime_error("anglesg: r2 no es 3x1");
         if (res.v2.getFilas() != 3 || res.v2.getColumnas() != 1)
             throw std::runtime_error("anglesg: v2 no es 3x1");
 
-        // Imprime resultados para inspección
+
         std::cout << "r2 = [";
         for (int i = 1; i <= 3; ++i) std::cout << res.r2(i,1) << (i < 3 ? ", " : "");
         std::cout << "]\nv2 = [";
@@ -871,17 +879,18 @@ int EccAnom_02(){
 {
 
 
+    _verify(Anglesdr_01); // Error por culpa de IERS (o anterior)
 
-    _verify(test_anglesg); // Error de memoria, como todos
-    //_verify(Anglesdr_01); // Error por culpa de IERS (o anterior)
+
+
+
 
 
 
 /*
-    _verify(Cheb3D_01);
-    _verify(Accel_RealDataTest);
-    //_verify(JPL_Eph_DE430_01);
 
+
+    _verify(nutangles01);
     _verify(AzElPa_01);
     _verify(AccelHarmonic01);
     _verify(G_AccelHarmonic01);
@@ -890,10 +899,13 @@ int EccAnom_02(){
     _verify(angl01);
     _verify(angl02);
     _verify(angl03);
-    _verify(nutangles01);
+    _verify(Cheb3D_01);
+    _verify(test_anglesg);
+    _verify(Accel_01);
     _verify(eqnEquinox01);
     _verify(gast01);
     _verify(elements01);
+    _verify(JPL_Eph_DE430_01);
     _verify(IERS01);
     _verify(LTC01);
     _verify(timediff01);
@@ -902,7 +914,6 @@ int EccAnom_02(){
     _verify(hgibbs01);
     _verify(Legendre_01);
     _verify(accel_point_mass_01);
-
     _verify(measUpdate01);
     _verify(meanObliquity01);
     _verify(meanObliquity02);
@@ -920,12 +931,16 @@ int EccAnom_02(){
     _verify(NutMatrix_01);
     _verify(Mjday_TDB_01);
     _verify(Doubler_01);
-    _verify(VarEqn_01);
     _verify(EccAnom_01);
     _verify(EccAnom_02);
+    _verify(VarEqn_01);
 
 
-*/
+    */
+    // FALTA TIMEUPDATE
+
+
+
 
     return 0;
 }

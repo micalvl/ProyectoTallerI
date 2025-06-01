@@ -15,7 +15,7 @@ add_executable(ProyectoTallerI
         include/R_z.h
         include/Sat_const.h
         src/Accel.cpp
-        src/Accel.h
+        include/Accel.h
         src/AccelHarmonic.cpp
         include/AccelHarmonic.h
         src/AccelPointMass.cpp
@@ -25,7 +25,7 @@ add_executable(ProyectoTallerI
         src/anglesdr.cpp
         src/anglesdr.h
         src/anglesg.cpp
-        src/anglesg.h
+        include/anglesg.h
         src/AzElPa.cpp
         include/AzElPa.h
         src/Cheb3D.cpp
@@ -35,7 +35,7 @@ add_executable(ProyectoTallerI
         src/doubler.cpp
         include/doubler.h
         src/EccAnom.cpp
-        src/EccAnom.h
+        include/EccAnom.h
         src/elements.cpp
         include/elements.h
         src/EqnEquinox.cpp

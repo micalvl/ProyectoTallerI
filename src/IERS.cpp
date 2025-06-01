@@ -22,14 +22,12 @@ IERSResult IERS(const Matrix& eop, double Mjd_UTC, char interp) {
     }
 
     if (idx > rows) {
-        throw std::runtime_error("IERS: no existe fila con floor(Mjd_UTC) en eopdata.");
+        throw std::runtime_error("IERS: not exists row with floor(Mjd_UTC) in eopdata.");
     }
 
     IERSResult R;
-    std::cout << "[DEBUG] idx = " << idx << ", rows = " << rows << ", interp = " << interp << std::endl;
 
     if (interp == 'l' && idx < rows) {
-        std::cout << "[DEBUG] Acceso interpolación: idx+1 = " << (idx+1) << std::endl;
         double mfme = 1440.0 * (Mjd_UTC - mjd);
         double fixf = mfme / 1440.0;
 
