@@ -20,27 +20,8 @@
 #include <algorithm>
 #include <tuple>
 #include <complex>
-
-vector<complex<double>> rootsOfPolynomial(const vector<double>& poly) {
-    int degree = poly.size() - 1;
-    vector<complex<double>> roots;
-
-    if (degree == 1) {
-        double a = poly[0], b = poly[1];
-        roots.push_back(-b / a);
-    }
-    else if (degree == 2) {
-        double a = poly[0], b = poly[1], c = poly[2];
-        std::complex<double> discriminant = pow(b, 2) - 4.0 * a * c;
-        roots.push_back((-b + sqrt(discriminant)) / (2.0 * a));
-        roots.push_back((-b - sqrt(discriminant)) / (2.0 * a));
-    }
-    else {
-        throw runtime_error("Error");
-    }
-
-    return roots;
-}
+#include <iostream>
+#include "../Rpoly/Rpoly/rpoly.h"
 
 AnglesGResult anglesg(
         double az1, double az2, double az3,
@@ -89,6 +70,7 @@ AnglesGResult anglesg(
     double b1 = tau3 / (6*(tau3 - tau1)) * ((tau3 - tau1)*(tau3 - tau1) - tau3*tau3);
     double b3 = -tau1 / (6*(tau3 - tau1)) * ((tau3 - tau1)*(tau3 - tau1) - tau1*tau1);
 
+    std::cout << " Matriz L:" << std::endl;
     Matrix L(3,3), R(3,3);
     for (int i = 1; i <= 3; ++i) {
         L(i,1) = Lb1(i,1);
@@ -100,7 +82,18 @@ AnglesGResult anglesg(
         R(i,2) = Rs2_t(i,1);
         R(i,3) = Rs3_t(i,1);
     }
-    Matrix D = L.inverse() * R;
+    std::cout << "[DEBUG] Matriz L:" << std::endl;
+    L.print();
+    std::cout << "[DEBUG] Matriz R:" << std::endl;
+    R.print();
+
+    std::cout << "[DEBUG] Calculando L.inverse()" << std::endl;
+    Matrix Linv = L.inverse();
+    Linv.print();
+
+    std::cout << "[DEBUG] Multiplicando Linv * R" << std::endl;
+    Matrix D = Linv * R;
+    D.print();
     double Ccye = 2.0 * (Lb2.transpose() * Rs2_t)(1,1);
     double d1s = D(2,1)*a1 - D(2,2) + D(2,3)*a3;
     double d2s = D(2,1)*b1 + D(2,3)*b3;
@@ -110,18 +103,27 @@ AnglesGResult anglesg(
     poly[2] = -(d1s*d1s + d1s*Ccye + Rs2_t.norm()*Rs2_t.norm());
     poly[6] = -GM_Earth*(d2s*Ccye + 2*d1s*d2s);
     poly[8] = -GM_Earth*GM_Earth*d2s*d2s;
-    vector<complex<double>> roots = rootsOfPolynomial(poly);
-    double bigr2 = -1e20;
-    for (const auto& r : roots) {
-        if (r.imag() == 0.0 && r.real() > bigr2) bigr2 = r.real();
+
+    // RPOLY
+    double coef[9];
+    for (int i = 0; i < 9; ++i) coef[i] = poly[i];
+
+    double zeror[8], zeroi[8];
+    int nroots = real_poly_roots(coef, 8, zeror, zeroi);
+
+    double bigr2 = -numeric_limits<double>::max();
+    for (int i = 0; i < nroots; ++i) {
+        if (fabs(zeroi[i]) < 1e-8 && zeror[i] > bigr2) {
+            bigr2 = zeror[i];
+        }
     }
 
-    double u = GM_Earth/(bigr2*bigr2*bigr2);
-    double C1 = a1 + b1*u, C2 = -1, C3 = a3 + b3*u;
-    Matrix C(3,1);
-    C(1,1) = C1;
-    C(2,1) = C2;
-    C(3,1) = C3;
+    if (bigr2 <= 0) throw runtime_error("anglesg: Error");
+
+    double u = GM_Earth / (bigr2 * bigr2 * bigr2);
+    double C1 = a1 + b1 * u, C2 = -1, C3 = a3 + b3 * u;
+    Matrix C(3, 1);
+    C(1, 1) = C1; C(2, 1) = C2; C(3, 1) = C3;
 
     Matrix temp = D * C;
     temp = temp.opsc(-1.0);
@@ -135,14 +137,14 @@ AnglesGResult anglesg(
     Matrix r3 = Rs3_t + Lb3.opsc(rho3);
 
     Matrix v2(3,1);
-    string error;
+    std::string error;
     GibbsResult res = gibbs(r1, r2, r3);
     v2 = res.v2;
     error = res.error;
     if (error != "ok") {
-        HGibbsResult res = hgibbs(r1, r2, r3, Mjd1, Mjd2, Mjd3);
-        v2 = res.v2;
-        error = res.error;
+        HGibbsResult res2 = hgibbs(r1, r2, r3, Mjd1, Mjd2, Mjd3);
+        v2 = res2.v2;
+        error = res2.error;
     }
 
     return {r2, v2};

@@ -6,9 +6,6 @@
 #define PROYECTOTALLERI_ECCANOM_H
 
 
-class EccAnom {
-
-};
-
+double EccAnom(double M, double e);
 
 #endif //PROYECTOTALLERI_ECCANOM_H

@@ -6,74 +6,63 @@
  *  @date   2025-05-30
  ***********************************************/
 
+#include <iostream>
 #include "Accel.h"
 
 
 Matrix Accel(double x, const Matrix& Y) {
+    std::cout << "[DEBUG] Accel inicio" << std::endl;
+    std::cout << "Y: " << Y.getFilas() << "x" << Y.getColumnas() << std::endl;
+    std::cout << "eopdata: " << eopdata.getFilas() << "x" << eopdata.getColumnas() << std::endl;
+    std::cout << "PC: " << PC.getFilas() << "x" << PC.getColumnas() << std::endl;
 
+    std::cout << "[DEBUG] IERS..." << std::endl;
     IERSResult ier = IERS(eopdata, AuxParam.Mjd_UTC + x/86400.0, 'l');
-    double x_pole  = ier.x_pole;
-    double y_pole  = ier.y_pole;
-    double UT1_UTC = ier.UT1_UTC;
-    double LOD     = ier.LOD;
-    double dpsi    = ier.dpsi;
-    double deps    = ier.deps;
-    double dx_pole = ier.dx_pole;
-    double dy_pole = ier.dy_pole;
-    double TAI_UTC = ier.TAI_UTC;
+    std::cout << "[DEBUG] timediff..." << std::endl;
+    TimeDiffResult td = timediff(ier.UT1_UTC, ier.TAI_UTC);
 
-    TimeDiffResult td = timediff(UT1_UTC, TAI_UTC);
-    double UT1_TAI = td.UT1_TAI;
-    double UTC_GPS = td.UTC_GPS;
-    double UT1_GPS = td.UT1_GPS;
-    double TT_UTC  = td.TT_UTC;
-    double GPS_UTC = td.GPS_UTC;
+    double Mjd_UT1 = AuxParam.Mjd_UTC + x/86400.0 + ier.UT1_UTC/86400.0;
+    double Mjd_TT  = AuxParam.Mjd_UTC + x/86400.0 + td.TT_UTC/86400.0;
 
-    double Mjd_UT1 = AuxParam.Mjd_UTC + x/86400.0 + UT1_UTC/86400.0;
-    double Mjd_TT  = AuxParam.Mjd_UTC + x/86400.0 + TT_UTC/86400.0;
-
+    std::cout << "[DEBUG] PrecMatrix..." << std::endl;
     Matrix P = PrecMatrix(MJD_J2000, Mjd_TT);
+    std::cout << "[DEBUG] NutMatrix..." << std::endl;
     Matrix N = NutMatrix(Mjd_TT);
     Matrix T = N * P;
-    Matrix E = PoleMatrix(x_pole, y_pole) * GHAMatrix(Mjd_UT1) * T;
+    std::cout << "[DEBUG] PoleMatrix..." << std::endl;
+    Matrix E = PoleMatrix(ier.x_pole, ier.y_pole) * GHAMatrix(Mjd_UT1) * T;
 
     double MJD_TDB = Mjday_TDB(Mjd_TT);
+    std::cout << "[DEBUG] JPL_Eph_DE430..." << std::endl;
     Ephemeris eph = JPL_Eph_DE430(MJD_TDB);
-    Matrix r_Mercury = eph.r_Mercury;
-    Matrix r_Venus   = eph.r_Venus;
-    Matrix r_Earth   = eph.r_Earth;
-    Matrix r_Mars    = eph.r_Mars;
-    Matrix r_Jupiter = eph.r_Jupiter;
-    Matrix r_Saturn  = eph.r_Saturn;
-    Matrix r_Uranus  = eph.r_Uranus;
-    Matrix r_Neptune = eph.r_Neptune;
-    Matrix r_Pluto   = eph.r_Pluto;
-    Matrix r_Moon    = eph.r_Moon;
-    Matrix r_Sun     = eph.r_Sun;
 
+    std::cout << "[DEBUG] Construyendo r_sat..." << std::endl;
     Matrix r_sat(3,1);
-    r_sat(1,1) = Y(1,1);
-    r_sat(2,1) = Y(2,1);
-    r_sat(3,1) = Y(3,1);
+    for (int i = 1; i <= 3; ++i)
+        r_sat(i, 1) = Y(i, 1);
 
+    std::cout << "[DEBUG] AccelHarmonic..." << std::endl;
     Matrix a = AccelHarmonic(r_sat, E, AuxParam.n, AuxParam.m);
 
     if (AuxParam.sun) {
-        a = a + AccelPointMass(r_sat, r_Sun,  GM_Sun);
+        std::cout << "[DEBUG] AccelPointMass Sun..." << std::endl;
+        a = a + AccelPointMass(r_sat, eph.r_Sun, GM_Sun);
     }
     if (AuxParam.moon) {
-        a = a + AccelPointMass(r_sat, r_Moon, GM_Moon);
+        std::cout << "[DEBUG] AccelPointMass Moon..." << std::endl;
+        a = a + AccelPointMass(r_sat, eph.r_Moon, GM_Moon);
     }
 
     if (AuxParam.planets) {
-        a = a + AccelPointMass(r_sat, r_Mercury, GM_Mercury);
-        a = a + AccelPointMass(r_sat, r_Venus,   GM_Venus);
-        a = a + AccelPointMass(r_sat, r_Mars,    GM_Mars);
-        a = a + AccelPointMass(r_sat, r_Jupiter, GM_Jupiter);
-        a = a + AccelPointMass(r_sat, r_Saturn,  GM_Saturn);
-        a = a + AccelPointMass(r_sat, r_Uranus,  GM_Uranus);
-        a = a + AccelPointMass(r_sat, r_Neptune, GM_Neptune);
-        a = a + AccelPointMass(r_sat, r_Pluto,   GM_Pluto);
+        std::cout << "[DEBUG] AccelPointMass Planets..." << std::endl;
+        a = a + AccelPointMass(r_sat, eph.r_Mercury, GM_Mercury);
+        a = a + AccelPointMass(r_sat, eph.r_Venus,   GM_Venus);
+        a = a + AccelPointMass(r_sat, eph.r_Mars,    GM_Mars);
+        a = a + AccelPointMass(r_sat, eph.r_Jupiter, GM_Jupiter);
+        a = a + AccelPointMass(r_sat, eph.r_Saturn,  GM_Saturn);
+        a = a + AccelPointMass(r_sat, eph.r_Uranus,  GM_Uranus);
+        a = a + AccelPointMass(r_sat, eph.r_Neptune, GM_Neptune);
+        a = a + AccelPointMass(r_sat, eph.r_Pluto,   GM_Pluto);
     }
 
 
@@ -85,5 +74,6 @@ Matrix Accel(double x, const Matrix& Y) {
     dY(5,1) = a(2,1);
     dY(6,1) = a(3,1);
 
+    std::cout << "[DEBUG] Accel fin OK" << std::endl;
     return dY;
 }

@@ -48,6 +48,7 @@
 #include "VarEqn.h"
 #include "anglesdr.h"
 #include "anglesg.h"
+#include "EccAnom.h"
 
 #define TOL_ 10e-14
 
@@ -291,8 +292,8 @@ int Cheb3D_01() {
     Matrix result = Cheb3D(t, N, Ta, Tb, Cx, Cy, Cz);
 
     _assert(fabs(result(1,1) - 2.0) < TOL_);
-    _assert(fabs(result(1,2) - 3.0) < TOL_);
-    _assert(fabs(result(1,3) - 4.0) < TOL_);
+    _assert(fabs(result(2,1) - 3.0) < TOL_);
+    _assert(fabs(result(3,1) - 4.0) < TOL_);
 
     return 0;
 }
@@ -672,29 +673,27 @@ int Doubler_01()
 }
 
 int Accel_RealDataTest() {
-    // Cargar eopdata completo desde fichero
-    int numColsEOP = 31;  // Ajusta según el número real de columnas de eop19620101.txt
-    eop19620101(numColsEOP);
+    eop19620101(21413, 13);
 
-    // Cargar PC completo
-    int filasPC = 2285, columnasPC = 1020;  // Asegúrate que coincida con DE430Coeff.txt
-    DE430Coeff(filasPC, columnasPC);
+    int nmax = 180; // o el grado real de tu fichero GGM03S
+    GGM03S(nmax+1);
 
-    std::cout << "PC cargado: " << PC.getFilas() << " filas, " << PC.getColumnas() << " columnas" << std::endl;
+    DE430Coeff(2285, 1020);
 
-    // Usar un MJD dentro del rango de eopdata
+    std::cout << "[OK] eopdata: " << eopdata.getFilas() << " filas, " << eopdata.getColumnas() << " columnas" << std::endl;
+    std::cout << "[OK] PC: " << PC.getFilas() << " filas, " << PC.getColumnas() << " columnas" << std::endl;
+
     double Mjd_test = 37665.0;  // Fecha inicial (1 enero 1962)
     AuxParam.Mjd_UTC = Mjd_test;
     AuxParam.Mjd_TT = Mjd_test;
-    AuxParam.n = 0;
-    AuxParam.m = 0;
+    AuxParam.n = nmax;
+    AuxParam.m = nmax;
     AuxParam.sun = 1;
     AuxParam.moon = 1;
     AuxParam.planets = 1;
 
     std::cout << "Usando Mjd_test=" << Mjd_test << std::endl;
 
-    // Vector estado satelital Y
     Matrix Y(6, 1);
     Y(1, 1) = 7000e3;
     Y(2, 1) = 0.0;
@@ -719,6 +718,7 @@ int Accel_RealDataTest() {
 
     return 0;
 }
+
 int AzElPa_01() {
     Matrix s(3,1);
     s(1,1) = 1000.0;
@@ -760,7 +760,7 @@ int VarEqn_01() {
     AuxParam.moon = 1;
     AuxParam.planets = 1;
 
-    eop19620101(31);
+    eop19620101(21413,31);
     DE430Coeff(2285, 1020);
 
     Matrix yPhip = VarEqn(0.0, yPhi);
@@ -806,36 +806,82 @@ int Anglesdr_01() {
 }
 
 int test_anglesg() {
+    eop19620101(21413, 13);
+    // Ángulos en radianes
     double az1 = 0.5, az2 = 0.6, az3 = 0.7;
     double el1 = 0.4, el2 = 0.5, el3 = 0.6;
 
+    // Fechas (MJD)
     double Mjd1 = 51544.0;
-    double Mjd2 = Mjd1 + (10.0/1440.0);
-    double Mjd3 = Mjd1 + (20.0/1440.0);
+    double Mjd2 = Mjd1 + (10.0 / 1440.0);   // 10 minutos después
+    double Mjd3 = Mjd1 + (20.0 / 1440.0);   // 20 minutos después
 
+    // Vectores posición (ejemplo: sobre el ecuador y en Z)
     Matrix Rs1(3,1), Rs2(3,1), Rs3(3,1);
     Rs1(1,1) = 6371e3; Rs1(2,1) = 0;      Rs1(3,1) = 0;
     Rs2(1,1) = 0;      Rs2(2,1) = 6371e3; Rs2(3,1) = 0;
     Rs3(1,1) = 0;      Rs3(2,1) = 0;      Rs3(3,1) = 6371e3;
 
-    AnglesGResult res = anglesg(az1, az2, az3, el1, el2, el3, Mjd1, Mjd2, Mjd3, Rs1, Rs2, Rs3);
+    try {
+        AnglesGResult res = anglesg(
+                az1, az2, az3, el1, el2, el3,
+                Mjd1, Mjd2, Mjd3, Rs1, Rs2, Rs3
+        );
 
-    _assert(res.r2.getFilas() == 3);
-    _assert(res.r2.getColumnas() == 1);
-    _assert(res.v2.getFilas() == 3);
-    _assert(res.v2.getColumnas() == 1);
+        // Comprueba tamaños
+        if (res.r2.getFilas() != 3 || res.r2.getColumnas() != 1)
+            throw std::runtime_error("anglesg: r2 no es 3x1");
+        if (res.v2.getFilas() != 3 || res.v2.getColumnas() != 1)
+            throw std::runtime_error("anglesg: v2 no es 3x1");
 
-    std::cout << "Test anglesg superado.\n";
+        // Imprime resultados para inspección
+        std::cout << "r2 = [";
+        for (int i = 1; i <= 3; ++i) std::cout << res.r2(i,1) << (i < 3 ? ", " : "");
+        std::cout << "]\nv2 = [";
+        for (int i = 1; i <= 3; ++i) std::cout << res.v2(i,1) << (i < 3 ? ", " : "");
+        std::cout << "]\n";
+
+        std::cout << "Test anglesg superado.\n";
+        return 0;
+    } catch (const std::exception& e) {
+        std::cerr << "[ERROR] test_anglesg: " << e.what() << std::endl;
+        return 1;
+    }
+}
+
+int EccAnom_01() {
+    double M1 = 1.23;
+    double e1 = 0.0;
+    double E1 = EccAnom(M1, e1);
+    _assert(fabs(E1 - M1) < TOL_);
+
+    return 0;
+}
+
+int EccAnom_02(){
+    double M2 = 0.0;
+    double e2 = 0.5;
+    double E2 = EccAnom(M2, e2);
+    _assert(fabs(E2 - 0.0) < TOL_);
+
     return 0;
 }
 
     int all_tests()
 {
+
+
+
+    _verify(test_anglesg); // Error de memoria, como todos
+    //_verify(Anglesdr_01); // Error por culpa de IERS (o anterior)
+
+
+
+/*
+    _verify(Cheb3D_01);
+    _verify(Accel_RealDataTest);
     //_verify(JPL_Eph_DE430_01);
 
-    //_verify(Accel_RealDataTest);
-    //_verify(test_anglesg); // Error de memoria, como todos
-/*
     _verify(AzElPa_01);
     _verify(AccelHarmonic01);
     _verify(G_AccelHarmonic01);
@@ -856,7 +902,7 @@ int test_anglesg() {
     _verify(hgibbs01);
     _verify(Legendre_01);
     _verify(accel_point_mass_01);
-    //_verify(Cheb3D_01);
+
     _verify(measUpdate01);
     _verify(meanObliquity01);
     _verify(meanObliquity02);
@@ -874,8 +920,10 @@ int test_anglesg() {
     _verify(NutMatrix_01);
     _verify(Mjday_TDB_01);
     _verify(Doubler_01);
-    //_verify(VarEqn_01); // funciona
-    //_verify(Anglesdr_01); // Error por culpa de IERS (o anterior)
+    _verify(VarEqn_01);
+    _verify(EccAnom_01);
+    _verify(EccAnom_02);
+
 
 */
 

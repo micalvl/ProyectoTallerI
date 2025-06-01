@@ -10,6 +10,7 @@
 #include "Legendre.h"
 #include "Matrix.h"
 #include <cmath>
+#include <stdexcept>
 #include "global.h"
 
 using namespace std;
@@ -37,62 +38,74 @@ using namespace std;
 %--------------------------------------------------------------------------
 */
 
-Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max){
-    double gm, d, lon, r_ref, dUdr, dUdlatgc, dUdlon, q3, q2, q1, latgc, b1, b2, b3, r2xy, ax, ay, az;
+Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max) {
+    double r_ref = 6378.1363e3;   // Radio de la Tierra [m]
+    double gm    = 398600.4415e9; // [m^3/s^2]
 
-    r_ref = 6378.1363e3;   // Earth's radius [m]; GGM03S
-    gm    = 398600.4415e9; // [m^3/s^2]; GGM03S
-
-// Body-fixed position
-    Matrix r_bf = E.operator*(r);
-
-// Auxiliary quantities
-    d = r_bf.norm();
-    // distance
-    latgc = asin(r_bf(3,1)/d);
-    lon = atan2(r_bf(2,1),r_bf(1,1));
-
-    Matrix pnm(300,300);
-    Matrix dpnm(300,300);
-    Legendre(n_max,m_max,latgc, pnm, dpnm);
-
-    dUdr = 0.0;
-    dUdlatgc = 0.0;
-    dUdlon = 0.0;
-    q3 = 0.0; q2 = q3; q1 = q2;
-
-    for (int n=0; n<= n_max; n++){
-        b1 = (-gm/pow(d,2)*pow((r_ref/d),2))*(n+1);
-        b2 =  (gm/d)*pow((r_ref/d),n);
-        b3 =  (gm/d)*pow((r_ref/d),n);
-
-        for (int m=0; m<=m_max; m++){
-            q1 = q1 + pnm(n+1,m+1)*(Cnm(n+1, m+1)*cos(m*lon)+Snm(n+1, m+1)*sin(m*lon));
-            q2 = q2 + dpnm(n+1,m+1)*(Cnm(n+1, m+1)*cos(m*lon)+Snm(n+1, m+1)*sin(m*lon));
-            q3 = q3 + m*pnm(n+1,m+1)*(Snm(n+1,m+1)*cos(m*lon)-Cnm(n+1, m+1)*sin(m*lon));
-        }
-
-        dUdr     = dUdr     + q1*b1;
-        dUdlatgc = dUdlatgc + q2*b2;
-        dUdlon   = dUdlon   + q3*b3;
-        q3 = 0; q2 = q3; q1 = q2;
-
+    // Comprobar que Cnm y Snm tienen el tamaño suficiente
+    if (Cnm.getFilas() < n_max+1 || Cnm.getColumnas() < m_max+1 ||
+        Snm.getFilas() < n_max+1 || Snm.getColumnas() < m_max+1) {
+        throw std::runtime_error("Cnm/Snm no tienen tamaño suficiente para n_max y m_max");
     }
 
+    // Transformar a sistema rotante
+    Matrix r_bf = E * r;
+
+    double d = r_bf.norm();
+    double latgc = asin(r_bf(3,1) / d);
+    double lon   = atan2(r_bf(2,1), r_bf(1,1));
+
+    Matrix pnm(n_max+1, m_max+1);
+    Matrix dpnm(n_max+1, m_max+1);
+
+    Legendre(n_max, m_max, latgc, pnm, dpnm);
+
+    double dUdr = 0.0;
+    double dUdlatgc = 0.0;
+    double dUdlon = 0.0;
+
+    // Sumas auxiliares para cada grado/orden
+    for (int n=0; n<=n_max; ++n) {
+        double q1 = 0.0, q2 = 0.0, q3 = 0.0;
+        double b1 = (-gm / (d*d)) * pow(r_ref/d, n) * (n+1);
+        double b2 =  (gm / d)     * pow(r_ref/d, n);
+        double b3 =  (gm / d)     * pow(r_ref/d, n);
+
+        for (int m=0; m<=m_max; ++m) {
+            double coef_cnm = Cnm(n+1, m+1);
+            double coef_snm = Snm(n+1, m+1);
+
+            double cosmlon = cos(m * lon);
+            double sinmlon = sin(m * lon);
+
+            double common = coef_cnm * cosmlon + coef_snm * sinmlon;
+
+            q1 += pnm(n+1, m+1) * common;
+            q2 += dpnm(n+1, m+1) * common;
+            q3 += m * pnm(n+1, m+1) * (coef_snm * cosmlon - coef_cnm * sinmlon);
+        }
+
+        dUdr     += q1 * b1;
+        dUdlatgc += q2 * b2;
+        dUdlon   += q3 * b3;
+    }
 
     // Body-fixed acceleration
-    r2xy = pow(r_bf(1, 1), 2) + pow(r_bf(2, 1), 2);
+    double r2xy = pow(r_bf(1,1), 2) + pow(r_bf(2,1), 2);
 
-    ax = (1.0 / d * dUdr - r_bf(3, 1) / (d * d * sqrt(r2xy)) * dUdlatgc) * r_bf(1, 1) - (1.0 / r2xy * dUdlon) * r_bf(2, 1);
-    ay = (1.0 / d * dUdr - r_bf(3, 1) / (d * d * sqrt(r2xy)) * dUdlatgc) * r_bf(2, 1) + (1.0 / r2xy * dUdlon) * r_bf(1, 1);
-    az = (1.0 / d * dUdr) * r_bf(3, 1) + (sqrt(r2xy) / (d * d)) * dUdlatgc;
+    double ax = (1.0 / d * dUdr - r_bf(3,1) / (d*d*sqrt(r2xy)) * dUdlatgc) * r_bf(1,1)
+                - (1.0 / r2xy * dUdlon) * r_bf(2,1);
+    double ay = (1.0 / d * dUdr - r_bf(3,1) / (d*d*sqrt(r2xy)) * dUdlatgc) * r_bf(2,1)
+                + (1.0 / r2xy * dUdlon) * r_bf(1,1);
+    double az = (1.0 / d * dUdr) * r_bf(3,1) + (sqrt(r2xy) / (d*d)) * dUdlatgc;
 
-    Matrix a_bf(3, 1);
-    a_bf(1, 1) = ax;
-    a_bf(2, 1) = ay;
-    a_bf(3, 1) = az; // Inertial acceleration
+    Matrix a_bf(3,1);
+    a_bf(1,1) = ax;
+    a_bf(2,1) = ay;
+    a_bf(3,1) = az;
 
-    Matrix a = E*a_bf;
+    // Volver a sistema inercial
+    Matrix a = E * a_bf;
 
     return a;
 }

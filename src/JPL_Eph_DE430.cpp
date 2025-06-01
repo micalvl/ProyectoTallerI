@@ -51,7 +51,6 @@ static std::vector<double> getCoeffs(const std::vector<double>& pc,
         throw std::runtime_error("getCoeffs: acceso fuera de rango");
     }
 
-    // Comprobación adicional: verificar si hay datos no nulos en el rango a extraer
     bool hayDatos = false;
     for (int i = (startIndex-1); i <= maxIdx; ++i) {
         if (pc[i] != 0.0) {
@@ -77,7 +76,6 @@ static std::vector<double> getCoeffs(const std::vector<double>& pc,
 
 Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
 
-    // buscar idx
     double JD = Mjd_TDB + 2400000.5;
     int rows = PC.getFilas(), cols = PC.getColumnas();
     int idx = 1;
@@ -87,7 +85,6 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
     if (idx > rows)
         throw std::invalid_argument("JPL_Eph_DE430: Mjd_TDB fuera de rango en PC.");
 
-    // copiar PCrow
     std::vector<double> PCrow(cols);
     for (int c = 1; c <= cols; ++c)
         PCrow[c-1] = PC(idx, c);
@@ -97,7 +94,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
 
     Ephemeris eph;
 
-    // Tierra
+    // Earth
     {
         auto Cx = getCoeffs(PCrow, 231, 2, 39, 13);
         auto Cy = getCoeffs(PCrow, 244, 2, 39, 13);
@@ -116,7 +113,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Earth = v.opsc(1e3);
     }
 
-    // --- Luna (8 bloques, step=39, blockLen=13, intervalo=4 días) ---
+    // Moon
     {
         auto Cx = getCoeffs(PCrow, 441, 8, 39, 13);
         auto Cy = getCoeffs(PCrow, 454, 8, 39, 13);
@@ -136,7 +133,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Moon = v.opsc(1e3);
     }
 
-    // --- Sol (2 bloques, step=33, blockLen=11, intervalo=16 días) ---
+    // Sun
     {
         auto Cx = getCoeffs(PCrow, 753, 2, 33, 11);
         auto Cy = getCoeffs(PCrow, 764, 2, 33, 11);
@@ -156,7 +153,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Sun = v.opsc(1e3);
     }
 
-    // --- Mercurio (4 bloques, step=42, blockLen=14, intervalo=8 días) ---
+    // Mercury
     {
         auto Cx = getCoeffs(PCrow,  3, 4, 42, 14);
         auto Cy = getCoeffs(PCrow, 17, 4, 42, 14);
@@ -176,7 +173,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Mercury = v.opsc(1e3);
     }
 
-    // --- Venus (2 bloques, step=30, blockLen=10, intervalo=16 días) ---
+    // Venus
     {
         auto Cx = getCoeffs(PCrow, 171, 2, 30, 10);
         auto Cy = getCoeffs(PCrow, 181, 2, 30, 10);
@@ -196,7 +193,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Venus = v.opsc(1e3);
     }
 
-    // --- Marte (1 bloque, step=0, blockLen=11, intervalo=32 días) ---
+    // Mars
     {
         auto Cx = getCoeffs(PCrow, 309, 1,  0, 11);
         auto Cy = getCoeffs(PCrow, 320, 1,  0, 11);
@@ -210,7 +207,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Mars = v.opsc(1e3);
     }
 
-    // --- Júpiter (1 bloque, step=0, blockLen=8, intervalo=32 días) ---
+    // Jupiter
     {
         auto Cx = getCoeffs(PCrow, 342, 1, 0, 8);
         auto Cy = getCoeffs(PCrow, 350, 1, 0, 8);
@@ -224,9 +221,8 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Jupiter = v.opsc(1e3);
     }
 
-    // --- Saturno, Urano, Neptuno, Plutón (similares a Júpiter) ---
+    // Saturn
     {
-        // Saturno
         auto Cx = getCoeffs(PCrow, 366, 1, 0, 7);
         auto Cy = getCoeffs(PCrow, 373, 1, 0, 7);
         auto Cz = getCoeffs(PCrow, 380, 1, 0, 7);
@@ -234,7 +230,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Saturn = Cheb3D(Mjd_TDB, 7, t1, t1+interval, Cx, Cy, Cz).opsc(1e3);
     }
     {
-        // Urano
+        // Urane
         auto Cx = getCoeffs(PCrow, 387, 1, 0, 6);
         auto Cy = getCoeffs(PCrow, 393, 1, 0, 6);
         auto Cz = getCoeffs(PCrow, 399, 1, 0, 6);
@@ -242,7 +238,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Uranus = Cheb3D(Mjd_TDB, 6, t1, t1+interval, Cx, Cy, Cz).opsc(1e3);
     }
     {
-        // Neptuno
+        // Neptune
         auto Cx = getCoeffs(PCrow, 405, 1, 0, 6);
         auto Cy = getCoeffs(PCrow, 411, 1, 0, 6);
         auto Cz = getCoeffs(PCrow, 417, 1, 0, 6);
@@ -250,7 +246,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Neptune = Cheb3D(Mjd_TDB, 6, t1, t1+interval, Cx, Cy, Cz).opsc(1e3);
     }
     {
-        // Plutón
+        // Pluto
         auto Cx = getCoeffs(PCrow, 423, 1, 0, 6);
         auto Cy = getCoeffs(PCrow, 429, 1, 0, 6);
         auto Cz = getCoeffs(PCrow, 435, 1, 0, 6);
@@ -258,7 +254,6 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         eph.r_Pluto = Cheb3D(Mjd_TDB, 6, t1, t1+interval, Cx, Cy, Cz).opsc(1e3);
     }
 
-    // 15) Ajustes finales de centros de masa
     double EMRAT  = 81.30056907419062;
     double EMRAT1 = 1.0 / (1.0 + EMRAT);
 

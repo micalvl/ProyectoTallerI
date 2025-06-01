@@ -93,9 +93,10 @@ add_executable(ProyectoTallerI
         src/unit.cpp
         include/unit.h
         src/VarEqn.cpp
-        src/VarEqn.h
+        include/VarEqn.h
         EFK_GEOS3.cpp
         EKF_test.cpp
         include/global.h
         src/global.cpp
-        )
+        Rpoly/Rpoly/rpoly.cpp
+)

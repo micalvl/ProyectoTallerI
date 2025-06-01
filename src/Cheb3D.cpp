@@ -33,37 +33,29 @@ Matrix Cheb3D(double t, int N, double Ta, double Tb,
               const std::vector<double>& Cz)
 {
     if (t < Ta || t > Tb)
-        throw std::invalid_argument("Cheb3D: t fuera de [Ta,Tb]");
+        throw std::invalid_argument("Cheb3D: t out of [Ta,Tb]");
 
-    // tau en [-1,1]
     double tau = 2.0*(t - Ta)/(Tb - Ta) - 1.0;
 
-    // f0, f1, f2 como vectores columna 3×1
     Matrix f0(3,1), f1(3,1), f2(3,1);
 
-    // Clenshaw hacia atrás: k = N..1
-    for (int k = N; k >= 1; --k) {
-        // Desplazamos
+    for (int k = N-1; k >= 1; --k) {
         f2 = f1;
         f1 = f0;
 
-        // Construimos coef(k) en 1-based
         Matrix coef(3,1);
         coef(1,1) = Cx[k];
         coef(2,1) = Cy[k];
         coef(3,1) = Cz[k];
 
-        // f0 = 2·tau·f1 − f2 + coef
         f0 = f1.opsc(2.0*tau) - f2 + coef;
     }
 
-    // Coeficiente de orden 0
     Matrix C0(3,1);
     C0(1,1) = Cx[0];
     C0(2,1) = Cy[0];
     C0(3,1) = Cz[0];
 
-    // Evaluación final
     return f0.opsc(tau) - f1 + C0;
 }
 

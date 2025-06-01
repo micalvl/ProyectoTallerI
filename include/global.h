@@ -26,7 +26,7 @@ extern Matrix Cnm;
 extern Matrix Snm;
 extern Matrix PC;
 
-void eop19620101(int c);
+void eop19620101(int nfilas, int ncols);
 
 void GGM03S(int n);
 

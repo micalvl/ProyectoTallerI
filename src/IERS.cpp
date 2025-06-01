@@ -3,56 +3,56 @@
 //
 
 #include <stdexcept>
+#include <iostream>
 #include "../include/IERS.h"
 using namespace std;
 
 IERSResult IERS(const Matrix& eop, double Mjd_UTC, char interp) {
     // Verificación mínima necesaria de dimensiones
-    if (eop.getFilas() < 13) {
-        throw std::runtime_error("IERS: eopdata debe tener al menos 13 filas");
+    if (eop.getColumnas() < 13) {
+        throw std::runtime_error("IERS: eopdata have min 13 columns");
     }
 
     double mjd = std::floor(Mjd_UTC);
-    int cols = eop.getColumnas();
+    int rows = eop.getFilas();
     int idx = 1;
 
-    // Buscar la columna con el MJD correspondiente
-    for (; idx <= cols; ++idx) {
-        if (eop(4, idx) == mjd) break;
+    for (; idx <= rows; ++idx) {
+        if (fabs(eop(idx, 4) - mjd) < 1e-8) break;
     }
 
-    if (idx > cols) {
-        throw std::runtime_error("IERS: no existe fila 4 con floor(Mjd_UTC) en eopdata.");
+    if (idx > rows) {
+        throw std::runtime_error("IERS: no existe fila con floor(Mjd_UTC) en eopdata.");
     }
 
-    // Solo interpolar si pidieron 'l' y existe una columna idx+1
-    if (interp == 'l' && idx < cols) {
+    IERSResult R;
+    std::cout << "[DEBUG] idx = " << idx << ", rows = " << rows << ", interp = " << interp << std::endl;
+
+    if (interp == 'l' && idx < rows) {
+        std::cout << "[DEBUG] Acceso interpolación: idx+1 = " << (idx+1) << std::endl;
         double mfme = 1440.0 * (Mjd_UTC - mjd);
         double fixf = mfme / 1440.0;
 
-        IERSResult R;
-        R.x_pole  = (eop(5,idx)   + (eop(5,idx+1)  - eop(5,idx))  * fixf) / Arcs;
-        R.y_pole  = (eop(6,idx)   + (eop(6,idx+1)  - eop(6,idx))  * fixf) / Arcs;
-        R.UT1_UTC = eop(7,idx)   + (eop(7,idx+1)  - eop(7,idx))  * fixf;
-        R.LOD     = eop(8,idx)   + (eop(8,idx+1)  - eop(8,idx))  * fixf;
-        R.dpsi    = (eop(9,idx)   + (eop(9,idx+1)  - eop(9,idx))  * fixf) / Arcs;
-        R.deps    = (eop(10,idx)  + (eop(10,idx+1) - eop(10,idx)) * fixf) / Arcs;
-        R.dx_pole = (eop(11,idx)  + (eop(11,idx+1) - eop(11,idx)) * fixf) / Arcs;
-        R.dy_pole = (eop(12,idx)  + (eop(12,idx+1) - eop(12,idx)) * fixf) / Arcs;
-        R.TAI_UTC = eop(13,idx);
+        R.x_pole  = (eop(idx, 5)   + (eop(idx+1, 5)  - eop(idx, 5))  * fixf) / Arcs;
+        R.y_pole  = (eop(idx, 6)   + (eop(idx+1, 6)  - eop(idx, 6))  * fixf) / Arcs;
+        R.UT1_UTC = eop(idx, 7)   + (eop(idx+1, 7)  - eop(idx, 7))  * fixf;
+        R.LOD     = eop(idx, 8)   + (eop(idx+1, 8)  - eop(idx, 8))  * fixf;
+        R.dpsi    = (eop(idx, 9)   + (eop(idx+1, 9)  - eop(idx, 9))  * fixf) / Arcs;
+        R.deps    = (eop(idx,10)   + (eop(idx+1,10)  - eop(idx,10))  * fixf) / Arcs;
+        R.dx_pole = (eop(idx,11)   + (eop(idx+1,11)  - eop(idx,11))  * fixf) / Arcs;
+        R.dy_pole = (eop(idx,12)   + (eop(idx+1,12)  - eop(idx,12))  * fixf) / Arcs;
+        R.TAI_UTC = eop(idx,13);
         return R;
     }
 
-    // Modo "sin interpolar" (o idx == cols)
-    IERSResult R;
-    R.x_pole  = eop(5,idx) / Arcs;
-    R.y_pole  = eop(6,idx) / Arcs;
-    R.UT1_UTC = eop(7,idx);
-    R.LOD     = eop(8,idx);
-    R.dpsi    = eop(9,idx) / Arcs;
-    R.deps    = eop(10,idx) / Arcs;
-    R.dx_pole = eop(11,idx) / Arcs;
-    R.dy_pole = eop(12,idx) / Arcs;
-    R.TAI_UTC = eop(13,idx);
+    R.x_pole  = eop(idx, 5) / Arcs;
+    R.y_pole  = eop(idx, 6) / Arcs;
+    R.UT1_UTC = eop(idx, 7);
+    R.LOD     = eop(idx, 8);
+    R.dpsi    = eop(idx, 9) / Arcs;
+    R.deps    = eop(idx,10) / Arcs;
+    R.dx_pole = eop(idx,11) / Arcs;
+    R.dy_pole = eop(idx,12) / Arcs;
+    R.TAI_UTC = eop(idx,13);
     return R;
 }

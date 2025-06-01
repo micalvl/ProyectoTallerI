@@ -2,15 +2,15 @@
 // Created by micalvl on 03/04/2025.
 //
 
-#include "VarEqn.h"
-#include "IERS.h"
-#include "timediff.h"
-#include "PrecMatrix.h"
-#include "NutMatrix.h"
-#include "PoleMatrix.h"
-#include "GHAMatrix.h"
-#include "AccelHarmonic.h"
-#include "G_AccelHarmonic.h"
+#include "../include/VarEqn.h"
+#include "../include/IERS.h"
+#include "../include/timediff.h"
+#include "../include/PrecMatrix.h"
+#include "../include/NutMatrix.h"
+#include "../include/PoleMatrix.h"
+#include "../include/GHAMatrix.h"
+#include "../include/AccelHarmonic.h"
+#include "../include/G_AccelHarmonic.h"
 
 Matrix VarEqn(double x, const Matrix& yPhi) {
     extern Param AuxParam;
