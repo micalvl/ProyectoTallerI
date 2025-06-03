@@ -7,45 +7,55 @@
  ***********************************************/
 
 #include <cmath>
+#include <algorithm>
 #include "Legendre.h"
 
 
 
-void Legendre(int n, int m, double fi, Matrix &pnm, Matrix &dpnm) {
+void Legendre(int n, int m, double phi, Matrix &pnm, Matrix &dpnm) {
     pnm = Matrix(n + 1, m + 1);
     dpnm = Matrix(n + 1, m + 1);
+
+    double sinphi = sin(phi);
+    double cosphi = cos(phi);
 
     pnm(1, 1) = 1.0;
     dpnm(1, 1) = 0.0;
 
-    if (n >= 1 && m >= 1) {
-        double sq3 = sqrt(3.0);
-        pnm(2,2)  = sq3 * cos(fi);
-        dpnm(2,2) = -sq3 * sin(fi);
+    if (n == 0) return;
+
+    pnm(2, 1) = sqrt(3.0) * sinphi;
+    dpnm(2, 1) = sqrt(3.0) * cosphi;
+
+    if (m >= 1) {
+        pnm(2, 2) = sqrt(3.0) * cosphi;
+        dpnm(2, 2) = -sqrt(3.0) * sinphi;
     }
 
-    for (int i = 2; i <= n; i++) {
-        pnm(i + 1, i + 1) = sqrt((2.0 * i + 1.0) / (2.0 * i)) * cos(fi) * pnm(i, i);
-        dpnm(i + 1, i + 1) = sqrt((2.0 * i + 1.0) / (2.0 * i)) * (cos(fi) * dpnm(i, i) - sin(fi) * pnm(i, i));
+    for (int i = 2; i <= n; ++i) {
+        // Diagonal
+        pnm(i + 1, i + 1) = sqrt((2.0 * i + 1.0) / (2.0 * i)) * cosphi * pnm(i, i);
+        dpnm(i + 1, i + 1) = sqrt((2.0 * i + 1.0) / (2.0 * i)) *
+                             (cosphi * dpnm(i, i) - sinphi * pnm(i, i));
     }
 
-    for (int i = 1; i <= n; i++) {
-        pnm(i + 1, i) = sqrt(2.0 * i + 1.0) * sin(fi) * pnm(i, i);
-        dpnm(i + 1, i) = sqrt(2.0 * i + 1.0) * (cos(fi) * pnm(i, i) + sin(fi) * dpnm(i, i));
+    for (int i = 1; i <= n; ++i) {
+        pnm(i + 1, i) = sqrt(2.0 * i + 1.0) * sinphi * pnm(i, i);
+        dpnm(i + 1, i) = sqrt(2.0 * i + 1.0) *
+                         (cosphi * pnm(i, i) + sinphi * dpnm(i, i));
     }
 
-    for (int j = 0; j <= m; j++) {
-        for (int i = j + 2; i <= n; i++) {
-            double denom = (i - j) * (i + j);
-            if (denom == 0.0) continue;
-
-            double a = sqrt((2.0 * i + 1.0) / denom);
+    for (int j = 0; j <= m; ++j) {
+        for (int i = j + 2; i <= n; ++i) {
+            double a = sqrt((2.0 * i + 1.0) / ((i - j) * (i + j)));
             double b = sqrt(2.0 * i - 1.0);
             double c = sqrt(((i + j - 1.0) * (i - j - 1.0)) / (2.0 * i - 3.0));
 
-            pnm(i + 1, j + 1) = a * (b * sin(fi) * pnm(i, j + 1) - c * pnm(i - 1, j + 1));
-            dpnm(i + 1, j + 1) = a * (b * (sin(fi) * dpnm(i, j + 1) + cos(fi) * pnm(i, j + 1)) - c * dpnm(i - 1, j + 1));
+            pnm(i + 1, j + 1) = a * (b * sinphi * pnm(i, j + 1) - c * pnm(i - 1, j + 1));
+            dpnm(i + 1, j + 1) = a * (b * (sinphi * dpnm(i, j + 1) + cosphi * pnm(i, j + 1))
+                                      - c * dpnm(i - 1, j + 1));
         }
     }
 }
+
 

@@ -39,16 +39,14 @@ using namespace std;
 */
 
 Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max) {
-    double r_ref = 6378.1363e3;   // Radio de la Tierra [m]
-    double gm    = 398600.4415e9; // [m^3/s^2]
+    double r_ref = 6378.1363e3;
+    double gm    = 398600.4415e9;
 
-    // Comprobar que Cnm y Snm tienen el tamaño suficiente
     if (Cnm.getFilas() < n_max+1 || Cnm.getColumnas() < m_max+1 ||
         Snm.getFilas() < n_max+1 || Snm.getColumnas() < m_max+1) {
-        throw std::runtime_error("Cnm/Snm no tienen tamaño suficiente para n_max y m_max");
+        throw std::runtime_error("Cnm/Snm out of range");
     }
 
-    // Transformar a sistema rotante
     Matrix r_bf = E * r;
 
     double d = r_bf.norm();
@@ -64,9 +62,10 @@ Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max) {
     double dUdlatgc = 0.0;
     double dUdlon = 0.0;
 
-    // Sumas auxiliares para cada grado/orden
     for (int n=0; n<=n_max; ++n) {
+
         double q1 = 0.0, q2 = 0.0, q3 = 0.0;
+
         double b1 = (-gm / (d*d)) * pow(r_ref/d, n) * (n+1);
         double b2 =  (gm / d)     * pow(r_ref/d, n);
         double b3 =  (gm / d)     * pow(r_ref/d, n);
@@ -90,7 +89,6 @@ Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max) {
         dUdlon   += q3 * b3;
     }
 
-    // Body-fixed acceleration
     double r2xy = pow(r_bf(1,1), 2) + pow(r_bf(2,1), 2);
 
     double ax = (1.0 / d * dUdr - r_bf(3,1) / (d*d*sqrt(r2xy)) * dUdlatgc) * r_bf(1,1)
@@ -104,9 +102,7 @@ Matrix AccelHarmonic(const Matrix& r, const Matrix& E, int n_max, int m_max) {
     a_bf(2,1) = ay;
     a_bf(3,1) = az;
 
-    // Volver a sistema inercial
-    Matrix a = E * a_bf;
-
+    Matrix a = E.transpose().operator*(a_bf);
     return a;
 }
 

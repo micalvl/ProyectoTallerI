@@ -8,7 +8,6 @@
 using namespace std;
 
 IERSResult IERS(const Matrix& eop, double Mjd_UTC, char interp) {
-    // Verificación mínima necesaria de dimensiones
     if (eop.getColumnas() < 13) {
         throw std::runtime_error("IERS: eopdata have min 13 columns");
     }

@@ -9,8 +9,8 @@
 #include "Matrix.h"
 
 struct AnglesGResult {
-    Matrix r2;  // Posición en t2
-    Matrix v2;  // Velocidad en t2
+    Matrix r2;
+    Matrix v2;
 };
 
 AnglesGResult anglesg(

@@ -38,7 +38,6 @@ Matrix AccelPointMass(const Matrix& r, const Matrix& s, double GM) {
 
     Matrix d = r.operator-(s);
 
-    // Norma de d y s
     double norm_d = d.norm();
     double norm_s = s.norm();
 

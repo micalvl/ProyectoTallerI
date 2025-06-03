@@ -321,15 +321,14 @@ Matrix DEInteg(
             h = tout - x;
         }
 
-        if (std::fabs(h) < H_MIN)                // ②
+        if (std::fabs(h) < H_MIN)
             h = sign_(H_MIN, h);
 
         x   += h;
         yy   = y_pred;
 
         if ( (del > 0 && x >= tout) || (del < 0 && x <= tout) ) {
-            // Hemos llegado (o sobrepasado) el instante solicitado
-            return yy;        //  ⇒  salimos de DEInteg
+            return yy;
         }
 
         double hnew = 2.0 * h;
