@@ -50,6 +50,7 @@
 #include "anglesg.h"
 #include "EccAnom.h"
 #include "TimeUpdate.h"
+#include "DEInteg.h"
 
 #define TOL_ 10e-14
 
@@ -352,22 +353,19 @@ int angl03(){
 int JPL_Eph_DE430_01() {
 
     const char* path = "../data/DE430Coeff.txt";
-    std::ifstream f(path);
+    ifstream f(path);
     _assert(f.is_open());
     f.close();
 
 
-    const int ROWS = 2285, COLS = 1020;
-    DE430Coeff(ROWS, COLS);
+    DE430Coeff(2285, 1020);
 
 
     double JD0 = PC(1,1), JD1 = PC(1,2);
-    std::cout << "PC(1,1) = " << JD0 << ", PC(1,2) = " << JD1 << "  (JD)\n";
 
 
     double Mjd_TDB = 0.5 * (JD0 + JD1) - 2400000.5;
     _assert(Mjd_TDB > 0.0);
-    std::cout << "Mjd_TDB = " << Mjd_TDB << "\n";
 
 
     Ephemeris eph = JPL_Eph_DE430(Mjd_TDB);
@@ -388,7 +386,6 @@ int JPL_Eph_DE430_01() {
     _assert(ne > TOL_);
     _assert(ns > TOL_);
 
-    std::cout << "[OK] Test JPL_Eph_DE430_01 superado.\n";
     return 0;
 }
 
@@ -451,8 +448,8 @@ int hgibbs01() {
     double a1 = 0.01;   // ≈0.57°
     double a2 = 0.015;  // ≈0.86°
     r1(1,1)=1; r1(2,1)=0; r1(3,1)=0;
-    r2(1,1)=std::cos(a1); r2(2,1)=std::sin(a1); r2(3,1)=0;
-    r3(1,1)=std::cos(a2); r3(2,1)=std::sin(a2); r3(3,1)=0;
+    r2(1,1)=cos(a1); r2(2,1)=sin(a1); r2(3,1)=0;
+    r3(1,1)=cos(a2); r3(2,1)=sin(a2); r3(3,1)=0;
 
     HGibbsResult res = hgibbs(r1, r2, r3, 0.0, 1.0, 2.0);
     const double tol_angle = 0.01745329251994;
@@ -470,7 +467,7 @@ int gast01() {
     double Mjd = MJD_J2000;
     double g1  = gast(Mjd);
     double g2  = gmst(Mjd) + EqnEquinox(Mjd);
-    g2 = std::fmod(g2, 2*M_PI);
+    g2 = fmod(g2, 2*M_PI);
     if (g2 < 0) g2 += 2*M_PI;
 
     _assert(fabs(g1 - g2) < TOL_);
@@ -702,14 +699,13 @@ int Accel_01() {
     try {
         Matrix dY = Accel(0.0, Y);
 
-        std::cout << "Resultados de Accel:" << std::endl;
         for (int i = 1; i <= 6; ++i) {
-            std::cout << "dY(" << i << ",1) = " << dY(i, 1) << std::endl;
+            cout << "dY(" << i << ",1) = " << dY(i, 1) << endl;
         }
 
-        std::cout << "Accel superado." << std::endl;
-    } catch (const std::exception &e) {
-        std::cerr << "Error en Accel: " << e.what() << std::endl;
+
+    } catch (const exception &e) {
+        cerr << "[Error] in Accel: " << e.what() << endl;
         return 1;
     }
 
@@ -807,7 +803,36 @@ int Anglesdr_01() {
     _assert(res.v2.getFilas() == 3);
     _assert(res.v2.getColumnas() == 1);
 
-    printf("[OK] Anglesdr_Test PASSED.\n");
+    return 0;
+}
+
+Matrix ode_simple(double t, const Matrix& y) {
+    double a = 1.0; // constante
+    Matrix dydt(1, 1);
+    dydt(1, 1) = a * y(1, 1);
+    return dydt;
+}
+
+int DEInteg_01() {
+    double t0 = 0.0;
+    double tf = 1.0;
+    double relerr = 1e-8;
+    double abserr = 1e-10;
+    int n_eqn = 1;
+    Matrix y0(1,1);
+    y0(1,1) = 1.0;
+
+    auto ode_simple = [](double t, const Matrix& y) {
+        Matrix dy(1,1);
+        dy(1,1) = y(1,1); // dy/dt = y
+        return dy;
+    };
+
+    Matrix yf = DEInteg(ode_simple, t0, tf, relerr, abserr, n_eqn, y0);
+    double expected = exp(1.0);
+
+    _assert(fabs(yf(1,1) - expected) <= 1e-4);
+
     return 0;
 }
 
@@ -832,23 +857,12 @@ int test_anglesg() {
                 Mjd1, Mjd2, Mjd3, Rs1, Rs2, Rs3
         );
 
-
         if (res.r2.getFilas() != 3 || res.r2.getColumnas() != 1)
-            throw std::runtime_error("anglesg: r2 no es 3x1");
-        if (res.v2.getFilas() != 3 || res.v2.getColumnas() != 1)
-            throw std::runtime_error("anglesg: v2 no es 3x1");
+            throw runtime_error("r2 is not 3x1");
 
-
-        std::cout << "r2 = [";
-        for (int i = 1; i <= 3; ++i) std::cout << res.r2(i,1) << (i < 3 ? ", " : "");
-        std::cout << "]\nv2 = [";
-        for (int i = 1; i <= 3; ++i) std::cout << res.v2(i,1) << (i < 3 ? ", " : "");
-        std::cout << "]\n";
-
-        std::cout << "Test anglesg superado.\n";
         return 0;
-    } catch (const std::exception& e) {
-        std::cerr << "[ERROR] test_anglesg: " << e.what() << std::endl;
+    } catch (const exception& e) {
+        cerr << "[ERROR] test_anglesg: " << e.what() << endl;
         return 1;
     }
 }
@@ -883,19 +897,19 @@ int TimeUpdate_01() {
     TimeUpdate(P, Phi, Qdt);
 
     bool ok = true;
-    ok &= std::fabs(P(1,1) - 1.1) < 1e-10;
-    ok &= std::fabs(P(1,2) - 2.0) < 1e-10;
-    ok &= std::fabs(P(2,1) - 3.0) < 1e-10;
-    ok &= std::fabs(P(2,2) - 4.1) < 1e-10;
+    ok &= fabs(P(1,1) - 1.1) < 1e-10;
+    ok &= fabs(P(1,2) - 2.0) < 1e-10;
+    ok &= fabs(P(2,1) - 3.0) < 1e-10;
+    ok &= fabs(P(2,2) - 4.1) < 1e-10;
 
     return 0;
 }
 
+
     int all_tests()
 {
-
-/*
     _verify(nutangles01);
+    _verify(DEInteg_01);
     _verify(AzElPa_01);
     _verify(AccelHarmonic01);
     _verify(G_AccelHarmonic01);
@@ -939,19 +953,14 @@ int TimeUpdate_01() {
     _verify(EccAnom_01);
     _verify(EccAnom_02);
     _verify(VarEqn_01);
-    _verify(Anglesdr_01); // cuidado con este test depende de si el numero es finito
+    _verify(Anglesdr_01); // WARNING
     _verify(TimeUpdate_01);
-    */
-
-
-
-
 
     return 0;
 }
 
 
-
+/*
 int main()
 {
     int result = all_tests();
@@ -960,7 +969,7 @@ int main()
         printf("PASSED\n");
 
     printf("Tests run: %d\n", tests_run);
-/*
+
     double v[] = {1.0, 2.0, 3.0, 4.0};
     double v2[] = {5.0, 6.0, 7.0, 8.0};
 
@@ -975,9 +984,10 @@ int main()
 
     m1 = m2 * m3 * m2;
     m1.print();
- */
+
     return result != 0;
 }
 
+*/
 
 

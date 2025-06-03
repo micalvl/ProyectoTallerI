@@ -47,10 +47,6 @@ AnglesDRResult anglesdr(
     los3(2,1) = cos(el3) * cos(az3);
     los3(3,1) = sin(el3);
 
-    std::cout << "[DEBUG] los1:"; los1.print();
-    std::cout << "[DEBUG] los2:"; los2.print();
-    std::cout << "[DEBUG] los3:"; los3.print();
-
 
     double lon1, lat1, h1;
     Geodetic(rsite1, lon1, lat1, h1);
@@ -78,13 +74,10 @@ AnglesDRResult anglesdr(
         los = E.transpose() * los;
         rsite = E.transpose() * rsite;
     };
+
     Matrix rsite1_t = rsite1;
     Matrix rsite2_t = rsite2;
     Matrix rsite3_t = rsite3;
-
-    std::cout << "[DEBUG] rsite1_t:"; rsite1_t.print();
-    std::cout << "[DEBUG] rsite2_t:"; rsite2_t.print();
-    std::cout << "[DEBUG] rsite3_t:"; rsite3_t.print();
 
     transform(Mjd1, los1, rsite1_t);
     transform(Mjd2, los2, rsite2_t);

@@ -23,7 +23,7 @@ add_executable(ProyectoTallerI
         src/angl.cpp
         include/angl.h
         src/anglesdr.cpp
-        src/anglesdr.h
+        include/anglesdr.h
         src/anglesg.cpp
         include/anglesg.h
         src/AzElPa.cpp
@@ -31,7 +31,7 @@ add_executable(ProyectoTallerI
         src/Cheb3D.cpp
         include/Cheb3D.h
         src/DEInteg.cpp
-        src/DEInteg.h
+        include/DEInteg.h
         src/doubler.cpp
         include/doubler.h
         src/EccAnom.cpp

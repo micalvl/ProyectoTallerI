@@ -44,11 +44,8 @@ static std::vector<double> getCoeffs(const std::vector<double>& pc,
 {
     int maxIdx = (startIndex - 1) + (blockCount - 1) * step + (blockLen - 1);
     if (maxIdx >= (int)pc.size()) {
-        std::cerr << "Error en getCoeffs: intento de acceso fuera de rango.\n";
-        std::cerr << "startIndex=" << startIndex << ", blockCount=" << blockCount
-                  << ", step=" << step << ", blockLen=" << blockLen << "\n";
-        std::cerr << "maxIdx=" << maxIdx << ", pc.size()=" << pc.size() << "\n";
-        throw std::runtime_error("getCoeffs: acceso fuera de rango");
+        std::cerr << "Error in getCoeffs: out of range\n";
+        throw std::runtime_error("getCoeffs: out of range");
     }
 
     bool hayDatos = false;
@@ -59,8 +56,7 @@ static std::vector<double> getCoeffs(const std::vector<double>& pc,
         }
     }
     if (!hayDatos) {
-        std::cerr << "Advertencia: getCoeffs encontró solo ceros en el rango ("
-                  << startIndex << " - " << maxIdx+1 << ")\n";
+        std::cerr << "Error" << startIndex << " - " << maxIdx+1 << ")\n";
     }
 
     std::vector<double> out;
@@ -83,7 +79,7 @@ Ephemeris JPL_Eph_DE430(double Mjd_TDB) {
         if (PC(idx,1) <= JD && JD <= PC(idx,2)) break;
     }
     if (idx > rows)
-        throw std::invalid_argument("JPL_Eph_DE430: Mjd_TDB fuera de rango en PC.");
+        throw std::invalid_argument("JPL_Eph_DE430: Mjd_TDB out of range in PC");
 
     std::vector<double> PCrow(cols);
     for (int c = 1; c <= cols; ++c)

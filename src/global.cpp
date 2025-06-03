@@ -15,20 +15,19 @@ Matrix Cnm;
 Matrix Snm;
 Matrix PC;
 
-void eop19620101(int nfilas, int ncols) {
-    eopdata = Matrix(nfilas, ncols);
+void eop19620101(int rows, int cols) {
+    eopdata = Matrix(rows, cols);
 
     FILE *fp = fopen("../data/eop19620101.txt", "r");
     if (fp == NULL) {
-        printf("Fail open eop19620101.txt file\n");
+        printf("Error opening eop19620101.txt file\n");
         exit(EXIT_FAILURE);
     }
 
-    // Leer línea a línea (por filas)
-    for (int i = 1; i <= nfilas; i++) {
-        for (int j = 1; j <= ncols; j++) {
+    for (int i = 1; i <= rows; i++) {
+        for (int j = 1; j <= cols; j++) {
             if (fscanf(fp, "%lf", &eopdata(i, j)) != 1) {
-                printf("Error leyendo dato (%d,%d) del fichero eop19620101.txt\n", i, j);
+                printf("Error\n");
                 fclose(fp);
                 exit(EXIT_FAILURE);
             }
@@ -36,12 +35,12 @@ void eop19620101(int nfilas, int ncols) {
     }
 
     fclose(fp);
-    printf("[OK] eopdata cargado: %d filas, %d columnas\n", nfilas, ncols);
+    printf("eopdata charged: %d rows, %d columns\n", rows, cols);
 }
 
-void GGM03S(int nmax) {
-    Cnm = Matrix::zeros(nmax+1, nmax+1);
-    Snm = Matrix::zeros(nmax+1, nmax+1);
+void GGM03S(int n) {
+    Cnm = Matrix::zeros(n+1, n+1);
+    Snm = Matrix::zeros(n+1, n+1);
 
     FILE *fp = fopen("../data/GGM03S.txt","r");
     if (fp == NULL) {
@@ -50,48 +49,44 @@ void GGM03S(int nmax) {
     }
 
     double aux;
-    int n, m;
+    int a, b;
     double cnm, snm;
 
 
-    while (fscanf(fp, "%d%d%lf%lf%lf%lf", &n, &m, &cnm, &snm, &aux, &aux) == 6) {
+    while (fscanf(fp, "%d%d%lf%lf%lf%lf", &a, &b, &cnm, &snm, &aux, &aux) == 6) {
 
-        Cnm(n+1, m+1) = cnm;
-        Snm(n+1, m+1) = snm;
+        Cnm(a+1, b+1) = cnm;
+        Snm(a+1, b+1) = snm;
     }
 
     fclose(fp);
 }
 
 
-static bool esValidoEnNumero(char c) {
-    return std::isdigit(c) || c=='+'||c=='-'||c=='.'||c=='E'||c=='e';
-}
+void DE430Coeff(int rows, int cols) {
 
-void DE430Coeff(int expectedRows, int expectedCols) {
-
-    PC = Matrix(expectedRows, expectedCols);
+    PC = Matrix(rows, cols);
 
     std::ifstream file("../data/DE430Coeff.txt");
     if (!file.is_open()) {
-        throw std::runtime_error("No pude abrir DE430Coeff.txt");
+        throw std::runtime_error("Cant open DE430Coeff.txt");
     }
 
     std::string line;
     int row = 1;
-    while (row <= expectedRows && std::getline(file, line)) {
+    while (row <= rows && std::getline(file, line)) {
         line.erase(0, line.find_first_not_of(" \t\r\n"));
         line.erase(line.find_last_not_of(" \t\r\n") + 1);
 
         if (line.empty()) continue;
 
         std::istringstream iss(line);
-        for (int col = 1; col <= expectedCols; ++col) {
+        for (int col = 1; col <= cols; ++col) {
             double v;
             if (!(iss >> v)) {
-                std::cerr << "Error leyendo valor en fila " << row << ", columna " << col << "\n";
+                std::cerr << "Error reading: " << row << ",  " << col << "\n";
                 throw std::runtime_error(
-                        "Error leyendo valor en fila " + std::to_string(row) + ", columna " + std::to_string(col));
+                        "Error reading:  " + std::to_string(row) + ", " + std::to_string(col));
             }
             PC(row, col) = v;
         }
@@ -99,11 +94,7 @@ void DE430Coeff(int expectedRows, int expectedCols) {
     }
     file.close();
 
-    if (row <= expectedRows) {
-        std::cerr << "[ADVERTENCIA] El archivo tiene menos filas (" << row-1 << ") de las esperadas (" << expectedRows << ")\n";
-    }
-
     if (PC.getFilas() == 0 || PC.getColumnas() == 0) {
-        throw std::runtime_error("DE430Coeff: Matriz PC quedó vacía.");
+        throw std::runtime_error("DE430Coeff: Matriz PC is empty.");
     }
 }
