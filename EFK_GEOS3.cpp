@@ -63,9 +63,9 @@ int main() {
         return out;
     };
 
-    int i = 1;
+    int i4 = 1;
     string line;
-    while (i <= nobs && getline(fobs, line)) {
+    while (i4 <= nobs && getline(fobs, line)) {
 
         if (line.find_first_not_of(" \t\r\n") == string::npos)
             continue;
@@ -80,12 +80,12 @@ int main() {
         double el   = std::stod( clean(line.substr(35, 7)) );
         double Dist = std::stod( clean(line.substr(44,10)) );
 
-        obs(i,1) = Mjday(Y, M, D, hh, mm, ss);
-        obs(i,2) = Rad * az;
-        obs(i,3) = Rad * el;
-        obs(i,4) = 1e3 * Dist;
+        obs(i4,1) = Mjday(Y, M, D, hh, mm, ss);
+        obs(i4,2) = Rad * az;
+        obs(i4,3) = Rad * el;
+        obs(i4,4) = 1e3 * Dist;
 
-        ++i;
+        ++i4;
     }
     fobs.close();
 
@@ -114,9 +114,9 @@ int main() {
     Matrix r2 = gauss.r2, v2 = gauss.v2;
 
     Matrix Y0_apr(6, 1);
-    for (int i = 1; i <= 3; ++i) {
-        Y0_apr(i, 1) = r2(i, 1);
-        Y0_apr(i + 3, 1) = v2(i, 1);
+    for (int i1 = 1; i1 <= 3; ++i1) {
+        Y0_apr(i1, 1) = r2(i1, 1);
+        Y0_apr(i1 + 3, 1) = v2(i1, 1);
     }
 
     double Mjd0 = Mjday(1995, 1, 29, 2, 38, 0);
@@ -198,8 +198,8 @@ int main() {
         Matrix U = R_z(theta);
 
         Matrix r(3, 1);
-        for (int i = 1; i <= 3; ++i) {
-            r(i, 1) = Y(i, 1);
+        for (int i3 = 1; i3 <= 3; ++i3) {
+            r(i3, 1) = Y(i3, 1);
         }
         Matrix s = LT * (U * r - Rs);
 
