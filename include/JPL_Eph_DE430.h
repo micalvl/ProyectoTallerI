@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   JPL_Eph_DE430.h
+ *  @brief  JPL_Eph_DE430 method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   undefined
+ ***********************************************/
 
 #ifndef PROYECTOTALLERI_JPL_EPH_DE430_H
 #define PROYECTOTALLERI_JPL_EPH_DE430_H
@@ -29,6 +33,15 @@ struct Ephemeris {
     {}
 };
 
+
+/**
+ * @brief Computes the sun, moon, and nine major planets' equatorial position using JPL Ephemerides.
+ * @param[in]  Mjd_TDB  Modified julian date of TDB.
+ * @return r_Earth(solar system barycenter (SSB)),r_Mars,r_Mercury,r_Venus,
+ *  r_Jupiter,r_Saturn,r_Uranus,r_Neptune,r_Pluto,r_Moon,
+ *  r_Sun(geocentric equatorial position ([m]) referred to the
+ *  International Celestial Reference Frame (ICRF)).
+ */
 Ephemeris JPL_Eph_DE430(double Mjd_TDB);
 
 

@@ -1,3 +1,11 @@
+/**
+ *  @file   global.cpp
+ *  @brief  file with auxiliar methods to open eop19620101, DE430Coeff and GGMO3S
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   undefined
+ ***********************************************/
+
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
@@ -16,6 +24,7 @@ Matrix Snm;
 Matrix PC;
 
 void eop19620101(int rows, int cols) {
+
     eopdata = Matrix(rows, cols);
 
     FILE *fp = fopen("../data/eop19620101.txt", "r");
@@ -32,31 +41,6 @@ void eop19620101(int rows, int cols) {
                 exit(EXIT_FAILURE);
             }
         }
-    }
-
-    fclose(fp);
-    printf("eopdata charged: %d rows, %d columns\n", rows, cols);
-}
-
-void GGM03S(int n) {
-    Cnm = Matrix::zeros(n+1, n+1);
-    Snm = Matrix::zeros(n+1, n+1);
-
-    FILE *fp = fopen("../data/GGM03S.txt","r");
-    if (fp == NULL) {
-        printf("Fail open GGM03S.txt file\n");
-        exit(EXIT_FAILURE);
-    }
-
-    double aux;
-    int a, b;
-    double cnm, snm;
-
-
-    while (fscanf(fp, "%d%d%lf%lf%lf%lf", &a, &b, &cnm, &snm, &aux, &aux) == 6) {
-
-        Cnm(a+1, b+1) = cnm;
-        Snm(a+1, b+1) = snm;
     }
 
     fclose(fp);
@@ -98,3 +82,28 @@ void DE430Coeff(int rows, int cols) {
         throw std::runtime_error("DE430Coeff: Matriz PC is empty.");
     }
 }
+
+void GGM03S(int n) {
+    Cnm = Matrix::zeros(n+1, n+1);
+    Snm = Matrix::zeros(n+1, n+1);
+
+    FILE *fp = fopen("../data/GGM03S.txt","r");
+    if (fp == NULL) {
+        printf("Fail opening GGM03S.txt file\n");
+        exit(EXIT_FAILURE);
+    }
+
+    double aux;
+    int a, b;
+    double cnm, snm;
+
+    while (fscanf(fp, "%d%d%lf%lf%lf%lf", &a, &b, &cnm, &snm, &aux, &aux) == 6) {
+
+        Cnm(a+1, b+1) = cnm;
+        Snm(a+1, b+1) = snm;
+    }
+    fclose(fp);
+}
+
+
+

@@ -13,6 +13,14 @@
 #include "Matrix.h"
 
 
+/**
+ * @brief Computes associated Legendre functions.
+ * @param[in] n Maximum degree.
+ * @param[in] m Maximum order.
+ * @param[in] phi Latitude angle [rad].
+ * @param[out] pnm pnm matrix.
+ * @param[out] dpnm dpnm matrix.
+ */
 void Legendre(int n,int m, double fi, Matrix &pnm, Matrix &dpnm);
 
 

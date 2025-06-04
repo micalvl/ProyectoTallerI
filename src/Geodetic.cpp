@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   Geodetic.cpp
+ *  @brief  Geodetic method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   undefined
+ ***********************************************/
 
 #include "../include/Geodetic.h"
 #include "Sat_const.h"

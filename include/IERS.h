@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   IERS.h
+ *  @brief  IERS method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-05-13
+ ***********************************************/
 
 #ifndef PROYECTOTALLERI_IERS_H
 #define PROYECTOTALLERI_IERS_H
@@ -23,6 +27,13 @@ struct IERSResult {
 };
 
 
+/**
+ * @brief Management of IERS time and polar motion data.
+ * @param[in] eop EOP table
+ * @param[in] Mjd_UTC Modified Julian Date (UTC) at which to retrieve/interpolate values.
+ * @param[in] interp If 'l', perform linear interpolation between day floor(Mjd_UTC).
+ * @return r_Earth(solar system barycenter (SSB)),r_Mars,r_Mercury,r_Venus,
+ */
 IERSResult IERS(const Matrix& eop, double Mjd_UTC, char interp = 'n');
 
 #endif //PROYECTOTALLERI_IERS_H

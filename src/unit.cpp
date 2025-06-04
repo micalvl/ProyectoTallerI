@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   unit.cpp
+ *  @brief  unit method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-04-14
+ ***********************************************/
 
 #include "../include/unit.h"
 #include <cmath>

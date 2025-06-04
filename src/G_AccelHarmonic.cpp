@@ -7,27 +7,6 @@
  ***********************************************/
 
 
-/*
-%--------------------------------------------------------------------------
-%
-% G_AccelHarmonic.m
-%
-% Purpose:
-%   Computes the gradient of the Earth's harmonic gravity field
-%
-% Inputs:
-%   r           Satellite position vector in the true-of-date system
-%   U           Transformation matrix to body-fixed system
-%   n           Gravity model degree
-%   m 			Gravity model order
-%
-% Output:
-%   G    		Gradient (G=da/dr) in the true-of-date system
-%
-% Last modified:   2015/08/12   M. Mahooti
-%
-%--------------------------------------------------------------------------
-*/
 
 
 #include "../include/G_AccelHarmonic.h"

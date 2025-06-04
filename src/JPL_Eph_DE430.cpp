@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   JPL_Eph_DE430.cpp
+ *  @brief  JPL_Eph_DE430 method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   undefined
+ ***********************************************/
 
 #include "JPL_Eph_DE430.h"
 #include "Cheb3D.h"
@@ -48,14 +52,14 @@ static std::vector<double> getCoeffs(const std::vector<double>& pc,
         throw std::runtime_error("getCoeffs: out of range");
     }
 
-    bool hayDatos = false;
+    bool data = false;
     for (int i = (startIndex-1); i <= maxIdx; ++i) {
         if (pc[i] != 0.0) {
-            hayDatos = true;
+            data = true;
             break;
         }
     }
-    if (!hayDatos) {
+    if (!data) {
         std::cerr << "Error" << startIndex << " - " << maxIdx+1 << ")\n";
     }
 

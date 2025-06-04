@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   IERS.cpp
+ *  @brief  IERS method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-05-13
+ ***********************************************/
 
 #include <stdexcept>
 #include <iostream>

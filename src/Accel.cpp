@@ -3,7 +3,7 @@
  *  @brief  Accel's method
  *  @author [Original Author]
  *  @transcribed by Miguel Calvo León
- *  @date   2025-05-30
+ *  @date   2025-05-26
  ***********************************************/
 
 #include <iostream>

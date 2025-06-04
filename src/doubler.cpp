@@ -1,20 +1,19 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   doubler.cpp
+ *  @brief  doubler method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   undefined
+ ***********************************************/
 
 #include "../include/doubler.h"
 #include "Sat_const.h"
 #include <cmath>
 
-DoublerResult doubler(
-        double cc1, double cc2,
-        double magrsite1, double magrsite2,
-        double magr1in,   double magr2in,
-        const Matrix& los1, const Matrix& los2, const Matrix& los3,
-        const Matrix& rsite1,const Matrix& rsite2,const Matrix& rsite3,
-        double t1, double t3,
-        bool direct
-) {
+DoublerResult doubler(double cc1, double cc2, double magrsite1, double magrsite2, double magr1in, double magr2in,
+        const Matrix& los1, const Matrix& los2, const Matrix& los3, const Matrix& rsite1, const Matrix& rsite2,
+        const Matrix& rsite3, double t1, double t3, bool direct)
+ {
     DoublerResult R;
 
     double D1 = cc1*cc1 - 4.0*(magrsite1*magrsite1 - magr1in*magr1in);

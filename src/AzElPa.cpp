@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   AzElPa.cpp
+ *  @brief  AzElPa method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   undefined
+ ***********************************************/
 
 #include "AzElPa.h"
 #include <cmath>

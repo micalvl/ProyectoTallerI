@@ -12,7 +12,12 @@
 
 #include "Matrix.h"
 
-Matrix R_x(double alpha);
+/**
+ * @brief Builds a 3×3 rotation matrix for a rotation about the X-axis.
+ * @param[in] angle Rotation angle in radians.
+ * @return vector result
+ */
+Matrix R_x(double angle);
 
 #endif
 

@@ -13,7 +13,13 @@
 
 #include "Matrix.h"
 
-Matrix R_y(double alpha);
+
+/**
+ * @brief Builds a 3×3 rotation matrix for a rotation about the Y-axis.
+ * @param[in] angle Rotation angle in radians.
+ * @return vector result
+ */
+Matrix R_y(double angle);
 
 
 #endif //PROYECTOTALLERI_R_Y_H

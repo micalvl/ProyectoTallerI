@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   DEInteg.h
+ *  @brief  DeInteg method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   undefined
+ ***********************************************/
 
 #ifndef PROYECTOTALLERI_DEINTEG_H
 #define PROYECTOTALLERI_DEINTEG_H
@@ -22,6 +26,19 @@ enum class DE_STATE {
 
 using ODEFunction = std::function<Matrix(double, const Matrix&)>;
 
+
+/**
+ * @brief Numerical integration methods for ordinaray differential equations. This module provides implemenation
+ * of the variable order variable stepsize multistep method of Shampine & Gordon.
+ * @param[in] func ODEFunction function.
+ * @param[in] t Initial time value.
+ * @param[in] tout Final time value.
+ * @param[in] relerr Relative error tolerance.
+ * @param[in] abserr Absolute error tolerance.
+ * @param[in] n_eqn Number of equations.
+ * @param[in,out] y DEInteg matrix.
+ * @return Matrix y modified.
+ */
 Matrix DEInteg(const ODEFunction& func, double t, double tout, double relerr,
                double abserr, int n_eqn, Matrix y);
 

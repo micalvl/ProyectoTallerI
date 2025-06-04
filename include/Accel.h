@@ -26,6 +26,17 @@
 
 using namespace std;
 
+
+/**
+ * @brief Computes the acceleration of an Earth orbiting satellite due to
+ *   - the Earth's harmonic gravity field,
+ *   - the gravitational perturbations of the Sun and Moon
+ *   - the solar radiation pressure and
+ *   - the atmospheric drag
+ * @param[in] x Terrestrial Time (Modified Julian Date).
+ * @param[in] Y Satellite state vector in the ICRF/EME2000 system.
+ * @return Acceleration (a=d^2r/dt^2) in the ICRF/EME2000 system.
+ */
 Matrix Accel(double x, const Matrix& Y);
 
 #endif //PROYECTOTALLERI_ACCEL_H

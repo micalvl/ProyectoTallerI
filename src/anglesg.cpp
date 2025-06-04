@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   anglesg.cpp
+ *  @brief  anglesg method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-05-30
+ ***********************************************/
 #include "anglesg.h"
 #include "global.h"
 #include "IERS.h"

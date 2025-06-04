@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   GHAMatrix.cpp
+ *  @brief  GHAMatrix method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   undefined
+ ***********************************************/
 
 #include "GHAMatrix.h"
 #include "gast.h"

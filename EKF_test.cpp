@@ -1,3 +1,12 @@
+/**
+ *  @file   EKF_test.cpp
+ *  @brief  A test file of all methods in the project
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-03-27
+ ***********************************************/
+
+
 #include <cmath>
 #include <cassert>
 #include <iostream>
@@ -839,16 +848,16 @@ int Anglesdr_01() {
         for (int col = 1; col <= 13; ++col) {
             eopdata(row, col) = 0.0;
         }
-        eopdata(row, 4) = 58000 + (row-1); // Mjd
-        eopdata(row, 5) = 3600;  // x_pole
-        eopdata(row, 6) = 7200;  // y_pole
-        eopdata(row, 7) = 3.5;   // UT1_UTC
-        eopdata(row, 8) = 0.1;   // LOD
-        eopdata(row, 9) = 10800; // dpsi
-        eopdata(row,10) = 14400; // deps
-        eopdata(row,11) = 1800;  // dx_pole
-        eopdata(row,12) = 2700;  // dy_pole
-        eopdata(row,13) = 37.0;  // TAI_UTC
+        eopdata(row, 4) = 58000 + (row-1);
+        eopdata(row, 5) = 3600;
+        eopdata(row, 6) = 7200;
+        eopdata(row, 7) = 3.5;
+        eopdata(row, 8) = 0.1;
+        eopdata(row, 9) = 10800;
+        eopdata(row,10) = 14400;
+        eopdata(row,11) = 1800;
+        eopdata(row,12) = 2700;
+        eopdata(row,13) = 37.0;
     }
 
     double az1 = 0.0,   az2 = M_PI/2, az3 = M_PI;
@@ -888,7 +897,7 @@ int DEInteg_01() {
     Matrix y_fake = DEInteg(func, t0, tf, relerr, abserr, n_eqn, y0);
     double y_real = exp(1.0);
 
-    cout << "C++ result: " << y_fake(1,1) << " (expected " << y_real << ")\n"; // that test failed. In matlab (y_real) the result is a bit different
+    cout << "C++ result: " << y_fake(1,1) << " (expected " << y_real << ")\n"; // this test is not correct. In matlab (y_real) the result is a bit different
 
     return 0;
 }

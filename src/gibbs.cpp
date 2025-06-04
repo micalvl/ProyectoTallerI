@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   gibbs.cpp
+ *  @brief  gibbs method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-04-14
+ ***********************************************/
 
 #include "../include/gibbs.h"
 #include "Sat_const.h"

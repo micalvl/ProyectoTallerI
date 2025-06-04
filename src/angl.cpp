@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   angl.cpp
+ *  @brief  angl method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-04-13
+ ***********************************************/
 
 #include "../include/angl.h"
 

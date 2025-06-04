@@ -11,6 +11,12 @@
 
 #include <cmath>
 
+
+/**
+ * @brief Computes the Modified Julian Date for barycentric dynamical time
+ * @param[in] Mjd_TT Modified Julian Date in Terrestrial Time (TT).
+ * @return Modified julian date (TDB)
+ */
 double Mjday_TDB(double Mjd_TT);
 
 

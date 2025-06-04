@@ -1,3 +1,11 @@
+/**
+ *  @file   EFK_GEOS3.cpp
+ *  @brief  Final file
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-05-31
+ ***********************************************/
+
 
 #include <iostream>
 #include <fstream>
@@ -23,7 +31,6 @@
 
 using namespace std;
 
-int n_eqn;
 
 
 int main() {
@@ -124,7 +131,7 @@ int main() {
     AuxParam.moon = 1;
     AuxParam.planets = 1;
 
-    n_eqn = 6;
+    int n_eqn = 6;
 
 
 

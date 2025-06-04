@@ -1,7 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
-
+/**
+ *  @file   MeasUpdate.cpp
+ *  @brief  MeasUpdate method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-04-20
+ ***********************************************/
 #include "MeasUpdate.h"
 
 

@@ -1,3 +1,12 @@
+/**
+ *  @file   DEInteg.cpp
+ *  @brief  DeInteg method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   undefined
+ ***********************************************/
+
+
 #include <functional>
 #include <limits>
 #include <vector>
@@ -7,7 +16,6 @@
 #include "sign_.h"
 
 using namespace std;
-
 
 using ODEFunction = function<Matrix(double, const Matrix&)>;
 

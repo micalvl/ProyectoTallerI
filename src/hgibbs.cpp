@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   hgibbs.cpp
+ *  @brief  hgibbs method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-04-17
+ ***********************************************/
 
 #include "../include/hgibbs.h"
 

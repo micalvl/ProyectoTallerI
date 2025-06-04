@@ -3,7 +3,7 @@
  *  @brief  AccelHarmonic function
  *  @author [Original Author]
  *  @transcribed by Miguel Calvo León
- *  @date   2025-04-23
+ *  @date   2025-04-28
  ***********************************************/
 
 #include "../include/AccelHarmonic.h"

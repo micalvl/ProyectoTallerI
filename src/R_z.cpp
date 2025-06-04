@@ -9,24 +9,15 @@
 #include <cmath>
 #include "../include/R_z.h"
 
-/*
-%--------------------------------------------------------------------------
-%  input:
-%    angle       - angle of rotation [rad]
-%
-%  output:
-%    rotmat      - vector result
-%--------------------------------------------------------------------------
-*/
 
 
-Matrix R_z(double alpha) {
-    Matrix rotmat(3, 3);
+
+Matrix R_z(double angle) {
     double C, S;
 
-    C = cos(alpha);
-    S = sin(alpha);
-    //rotmat = zeros(3,3);
+    C = cos(angle);
+    S = sin(angle);
+    Matrix rotmat = Matrix::zeros(3,3);
 
     rotmat(1, 1) = C;
     rotmat(1, 2) = S;

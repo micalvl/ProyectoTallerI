@@ -1,6 +1,12 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   timediff.cpp
+ *  @brief  timediff method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   undefined
+ ***********************************************/
+
+
 #include "../include/TimeDiff.h"
 
 TimeDiffResult timediff(double UT1_UTC, double TAI_UTC) {

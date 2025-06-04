@@ -1,6 +1,6 @@
 /**
  *  @file   NutAngles.cpp
- *  @brief  gmst function
+ *  @brief  NutAngles function
  *  @author [Original Author]
  *  @transcribed by Miguel Calvo León
  *  @date   2025-04-23

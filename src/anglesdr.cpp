@@ -1,6 +1,10 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   anglesdr.cpp
+ *  @brief  anglesdr function
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-05-30
+ ***********************************************/
 
 #include "anglesdr.h"
 #include "global.h"

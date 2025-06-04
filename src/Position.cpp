@@ -1,20 +1,12 @@
-//
-// Created by micalvl on 03/04/2025.
-//
+/**
+ *  @file   Position.cpp
+ *  @brief  Position method
+ *  @author [Original Author]
+ *  @transcribed by Miguel Calvo León
+ *  @date   2025-04-20
+ ***********************************************/
 
-/*
-%--------------------------------------------------------------------------
-%
-% Position.m
-%
-% Purpose:
-%   Position vector (r [m]) from geodetic coordinates (Longitude [rad],
-%   latitude [rad], altitude [m])
-%
-% Last modified:   2015/08/12   M. Mahooti
-%
-%--------------------------------------------------------------------------
-*/
+
 #include "../include/Position.h"
 
 
